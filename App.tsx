@@ -40,14 +40,14 @@ export default function App() {
     }
   };
 
-  // Render main screen flow
+  // Render screen flow with guaranteed safe area bounds for all devices (including Poco C65)
   const renderContent = () => {
-    // 1. Onboarding first
+    // 1. Onboarding
     if (!hasOnboarded || activeScreen === 'onboarding') {
       return <OnboardingScreen />;
     }
 
-    // 2. Auth (Login/Register) if no user logged in
+    // 2. Auth (Login/Register)
     if (!user || activeScreen === 'auth') {
       return <AuthScreen />;
     }
@@ -67,7 +67,7 @@ export default function App() {
       return <DiagnosisResultScreen />;
     }
 
-    // 6. Default to main 5-tab dashboard with floating pill navbar
+    // 6. Default to main 5-tab dashboard with responsive floating navbar
     return (
       <View style={styles.tabContainer}>
         <View style={styles.tabContent}>{renderTabContent()}</View>
@@ -78,7 +78,7 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
+      <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right', 'bottom']}>
         <StatusBar style="dark" />
         {renderContent()}
         <NotificationBanner />
@@ -95,7 +95,8 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.canvas
   },
   tabContainer: {
-    flex: 1
+    flex: 1,
+    backgroundColor: COLORS.canvas
   },
   tabContent: {
     flex: 1

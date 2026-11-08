@@ -221,9 +221,9 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.canvas
   },
   scroll: {
-    paddingHorizontal: 20,
-    paddingTop: 12,
-    paddingBottom: 115
+    paddingHorizontal: 16,
+    paddingTop: 10,
+    paddingBottom: 20
   },
   userCard: {
     backgroundColor: COLORS.surface,
@@ -449,3 +449,4 @@ const styles = StyleSheet.create({
     color: '#94A3B8'
   }
 });
+

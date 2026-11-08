@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS } from '../constants/theme';
 import { useDiagnosisStore } from '../store/diagnosisStore';
@@ -17,7 +17,7 @@ export const ConfidencePickerScreen: React.FC = () => {
     .filter(Boolean);
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <View style={styles.container}>
       {/* Top Wizard Bar */}
       <View style={styles.header}>
         <TouchableOpacity style={styles.headerBtn} onPress={() => setActiveScreen('diagnosis_symptoms')}>
@@ -36,7 +36,11 @@ export const ConfidencePickerScreen: React.FC = () => {
         <View style={[styles.progressBarFill, { width: '100%' }]} />
       </View>
 
-      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={styles.scrollArea}
+        contentContainerStyle={styles.scroll}
+        showsVerticalScrollIndicator={false}
+      >
         <View style={styles.headline}>
           <Text style={styles.headlineTitle}>Seberapa yakin observasi Anda?</Text>
           <Text style={styles.headlineDesc}>
@@ -88,7 +92,7 @@ export const ConfidencePickerScreen: React.FC = () => {
         </View>
       </ScrollView>
 
-      {/* Bottom Sticky Action Bar */}
+      {/* Responsive Bottom Action Bar (Normal flow, never covered by Android 3 buttons) */}
       <View style={styles.bottomBar}>
         <TouchableOpacity
           style={styles.modifyBtn}
@@ -98,16 +102,16 @@ export const ConfidencePickerScreen: React.FC = () => {
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.calcBtn} activeOpacity={0.85} onPress={calculateResult}>
-          <Ionicons name="calculator" size={18} color={COLORS.surface} />
+          <Ionicons name="calculator" size={17} color="#FFFFFF" />
           <Text style={styles.calcBtnText}>Hitung Diagnosis CF</Text>
         </TouchableOpacity>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  safe: {
+  container: {
     flex: 1,
     backgroundColor: COLORS.canvas
   },
@@ -117,7 +121,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: COLORS.surface
+    backgroundColor: COLORS.surface,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.line
   },
   headerBtn: {
     flexDirection: 'row',
@@ -140,22 +146,24 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5
   },
   headerTitle: {
-    fontSize: 12,
-    fontWeight: '700',
+    fontSize: 13,
+    fontWeight: '800',
     color: COLORS.ink
   },
   progressBarTrack: {
     height: 3,
-    backgroundColor: COLORS.line,
-    width: '100%'
+    backgroundColor: '#E2E8F0'
   },
   progressBarFill: {
-    height: 3,
+    height: '100%',
     backgroundColor: COLORS.brand
+  },
+  scrollArea: {
+    flex: 1
   },
   scroll: {
     padding: 16,
-    paddingBottom: 100,
+    paddingBottom: 24,
     gap: 14
   },
   headline: {
@@ -167,7 +175,7 @@ const styles = StyleSheet.create({
     color: COLORS.ink
   },
   headlineDesc: {
-    fontSize: 11,
+    fontSize: 11.5,
     color: COLORS.muted,
     lineHeight: 16
   },
@@ -176,8 +184,8 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: COLORS.surface,
+    borderRadius: 18,
     padding: 14,
-    borderRadius: 14,
     borderWidth: 1,
     borderColor: COLORS.line,
     gap: 12
@@ -186,35 +194,33 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-start',
     justifyContent: 'space-between',
-    gap: 8
+    gap: 10
   },
   cardTitleWrap: {
     flex: 1
   },
   categoryLabel: {
-    fontSize: 9,
+    fontSize: 10,
     fontWeight: '700',
     color: COLORS.brand,
     textTransform: 'uppercase',
-    letterSpacing: 0.5,
     marginBottom: 2
   },
   symptomTitle: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '700',
     color: COLORS.ink
   },
   codeBadge: {
-    backgroundColor: '#F1F5F9',
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 4
+    backgroundColor: COLORS.bentoBlue,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 8
   },
   codeText: {
-    fontSize: 9,
-    fontFamily: 'monospace',
-    fontWeight: '700',
-    color: COLORS.muted
+    fontSize: 10,
+    fontWeight: '800',
+    color: COLORS.brandDark
   },
   scaleGrid: {
     flexDirection: 'row',
@@ -222,18 +228,17 @@ const styles = StyleSheet.create({
   },
   scaleBtn: {
     flex: 1,
-    backgroundColor: COLORS.canvas,
-    borderWidth: 1,
-    borderColor: COLORS.line,
-    borderRadius: 10,
-    paddingVertical: 8,
+    backgroundColor: COLORS.surfaceSubtle,
+    borderRadius: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 4,
     alignItems: 'center',
-    justifyContent: 'center',
-    gap: 2
+    borderWidth: 1,
+    borderColor: COLORS.line
   },
   scaleBtnActive: {
-    backgroundColor: COLORS.brand,
-    borderColor: COLORS.brand
+    backgroundColor: COLORS.brandNavy,
+    borderColor: COLORS.brandNavy
   },
   scaleLabel: {
     fontSize: 10,
@@ -241,43 +246,43 @@ const styles = StyleSheet.create({
     color: COLORS.ink
   },
   scaleLabelActive: {
-    color: COLORS.surface,
+    color: '#FFFFFF',
     fontWeight: '700'
   },
   scaleValue: {
     fontSize: 9,
-    fontFamily: 'monospace',
-    color: COLORS.muted
+    color: COLORS.muted,
+    marginTop: 2
   },
   scaleValueActive: {
-    color: '#BFDBFE'
+    color: '#93C5FD'
   },
   bottomBar: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
     backgroundColor: COLORS.surface,
     borderTopWidth: 1,
     borderTopColor: COLORS.line,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: 10,
     paddingHorizontal: 16,
-    paddingVertical: 12,
-    elevation: 10
+    paddingVertical: 10,
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 6,
+    elevation: 8
   },
   modifyBtn: {
     paddingHorizontal: 14,
-    paddingVertical: 12,
-    borderRadius: 12,
+    paddingVertical: 11,
+    borderRadius: 14,
     borderWidth: 1,
     borderColor: COLORS.line
   },
   modifyBtnText: {
     fontSize: 12,
-    fontWeight: '600',
-    color: COLORS.ink
+    fontWeight: '700',
+    color: COLORS.inkSecondary
   },
   calcBtn: {
     flex: 1,
@@ -285,19 +290,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 12,
-    borderRadius: 12,
-    gap: 8,
+    paddingVertical: 11,
+    borderRadius: 14,
+    gap: 6,
     shadowColor: COLORS.brand,
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
+    shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 3
   },
   calcBtnText: {
-    fontSize: 13,
+    fontSize: 12.5,
     fontWeight: '700',
-    color: COLORS.surface
+    color: '#FFFFFF'
   }
 });
-

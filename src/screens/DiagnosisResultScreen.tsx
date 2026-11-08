@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, SafeAreaView, Share } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Share } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS } from '../constants/theme';
 import { useDiagnosisStore } from '../store/diagnosisStore';
@@ -14,7 +14,7 @@ export const DiagnosisResultScreen: React.FC = () => {
 
   if (!diagnosisResults || diagnosisResults.length === 0) {
     return (
-      <SafeAreaView style={styles.safe}>
+      <View style={styles.container}>
         <View style={styles.emptyContainer}>
           <Ionicons name="alert-circle-outline" size={48} color={COLORS.warning} />
           <Text style={styles.emptyTitle}>Bukti Klinis Belum Cukup</Text>
@@ -25,7 +25,7 @@ export const DiagnosisResultScreen: React.FC = () => {
             <Text style={styles.primaryBtnText}>Ulangi Pilih Gejala</Text>
           </TouchableOpacity>
         </View>
-      </SafeAreaView>
+      </View>
     );
   }
 
@@ -43,7 +43,7 @@ export const DiagnosisResultScreen: React.FC = () => {
   };
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <View style={styles.container}>
       {/* Top Bar */}
       <View style={styles.header}>
         <TouchableOpacity style={styles.headerBtn} onPress={() => { setActiveTab('beranda'); setActiveScreen('main'); }}>
@@ -214,12 +214,12 @@ export const DiagnosisResultScreen: React.FC = () => {
           </TouchableOpacity>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  safe: {
+  container: {
     flex: 1,
     backgroundColor: COLORS.canvas
   },

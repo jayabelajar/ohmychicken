@@ -19,12 +19,11 @@ export const HistoryScreen: React.FC = () => {
   const openDiseaseDetail = useDiagnosisStore((s) => s.openDiseaseDetail);
 
   const dates = [
-    { day: '6', label: '6' },
-    { day: '7', label: '7' },
+    { day: '6', label: '6 Nov' },
+    { day: '7', label: '7 Nov' },
     { day: '8', label: '8 Nov 2026', active: true },
-    { day: '9', label: '9' },
-    { day: '10', label: '10' },
-    { day: '11', label: '11' }
+    { day: '9', label: '9 Nov' },
+    { day: '10', label: '10 Nov' }
   ];
 
   const [selectedDate, setSelectedDate] = useState('8 Nov 2026');
@@ -41,11 +40,10 @@ export const HistoryScreen: React.FC = () => {
     );
   };
 
-  // Calculate average accuracy
   const avgAccuracy =
     history.length > 0
       ? Math.round(history.reduce((acc, h) => acc + h.percentage, 0) / history.length)
-      : 0;
+      : 100;
 
   return (
     <View style={styles.container}>
@@ -78,14 +76,14 @@ export const HistoryScreen: React.FC = () => {
           })}
         </ScrollView>
 
-        {/* Top 2 Bento Cards Side by Side (Like Slide 3) */}
+        {/* Top 2 Bento Cards Side by Side (Consistent Nuansa Biru) */}
         <View style={styles.topBentoRow}>
-          {/* Mint Bento: Total Kasus */}
-          <View style={[styles.bentoCard, { backgroundColor: '#DCFCE7' }]}>
+          {/* Bento 1: Total Diagnosa */}
+          <View style={[styles.bentoCard, { backgroundColor: COLORS.bentoBlue, borderColor: COLORS.bentoBlueBorder }]}>
             <View style={styles.bentoTop}>
               <Text style={styles.bentoTitle}>Total Diagnosa</Text>
               <View style={styles.bentoIconCircle}>
-                <Ionicons name="paw" size={14} color="#15803D" />
+                <Ionicons name="paw" size={13} color={COLORS.brand} />
               </View>
             </View>
             <View style={styles.bentoValueCircle}>
@@ -94,23 +92,22 @@ export const HistoryScreen: React.FC = () => {
             </View>
           </View>
 
-          {/* Soft Lavender Bento: Rata-rata Akurasi */}
-          <View style={[styles.bentoCard, { backgroundColor: '#F3E8FF' }]}>
+          {/* Bento 2: Rata-rata Akurasi CF */}
+          <View style={[styles.bentoCard, { backgroundColor: COLORS.surface, borderColor: COLORS.line }]}>
             <View style={styles.bentoTop}>
               <Text style={styles.bentoTitle}>Akurasi CF</Text>
               <View style={styles.bentoIconCircle}>
-                <Ionicons name="pulse" size={14} color="#7E22CE" />
+                <Ionicons name="pulse" size={13} color={COLORS.brand} />
               </View>
             </View>
             <View style={styles.bentoChartWrap}>
-              {/* Mini wave path representation */}
               <View style={styles.miniWaveContainer}>
-                <View style={[styles.waveDot, { height: 16 }]} />
-                <View style={[styles.waveDot, { height: 28 }]} />
-                <View style={[styles.waveDot, { height: 20 }]} />
+                <View style={[styles.waveDot, { height: 14 }]} />
+                <View style={[styles.waveDot, { height: 24 }]} />
+                <View style={[styles.waveDot, { height: 18 }]} />
+                <View style={[styles.waveDot, { height: 32 }]} />
+                <View style={[styles.waveDot, { height: 22 }]} />
                 <View style={[styles.waveDot, { height: 36 }]} />
-                <View style={[styles.waveDot, { height: 26 }]} />
-                <View style={[styles.waveDot, { height: 42 }]} />
               </View>
               <Text style={styles.bentoAccNumber}>{avgAccuracy}%</Text>
               <Text style={styles.bentoSubText}>Rata-rata</Text>
@@ -123,26 +120,26 @@ export const HistoryScreen: React.FC = () => {
           <View style={styles.chartHeader}>
             <View>
               <Text style={styles.chartTotalNumber}>
-                {history.length > 0 ? `${history.length * 3 + 4} Kasus` : '0 Kasus'}
+                {history.length > 0 ? `${history.length * 2 + 5} Kasus` : '0 Kasus'}
               </Text>
               <Text style={styles.chartSubtitle}>Frekuensi mingguan 🐥</Text>
             </View>
             <View style={styles.filterPill}>
               <Text style={styles.filterPillText}>Minggu ini</Text>
-              <Ionicons name="chevron-down" size={12} color="#0284C7" />
+              <Ionicons name="chevron-down" size={11} color={COLORS.brandDark} />
             </View>
           </View>
 
           {/* 7 Vertical Pill Bars */}
           <View style={styles.barChartContainer}>
             {[
-              { day: 'Sen', h1: 45, h2: 25 },
-              { day: 'Sel', h1: 70, h2: 40 },
-              { day: 'Rab', h1: 55, h2: 30 },
-              { day: 'Kam', h1: 85, h2: 50, active: true },
-              { day: 'Jum', h1: 65, h2: 35 },
-              { day: 'Sab', h1: 90, h2: 60 },
-              { day: 'Min', h1: 40, h2: 20 }
+              { day: 'Sen', h1: 45 },
+              { day: 'Sel', h1: 70 },
+              { day: 'Rab', h1: 55 },
+              { day: 'Kam', h1: 85, active: true },
+              { day: 'Jum', h1: 65 },
+              { day: 'Sab', h1: 90 },
+              { day: 'Min', h1: 40 }
             ].map((bar, i) => (
               <View key={i} style={styles.barCol}>
                 <View style={styles.barPillTrack}>
@@ -167,7 +164,7 @@ export const HistoryScreen: React.FC = () => {
           <Text style={styles.sectionTitle}>Catatan Konsultasi Terakhir</Text>
           {history.length > 0 && (
             <TouchableOpacity style={styles.clearBtn} onPress={handleClearHistory}>
-              <Ionicons name="trash-outline" size={14} color="#EF4444" />
+              <Ionicons name="trash-outline" size={13} color={COLORS.danger} />
               <Text style={styles.clearBtnText}>Bersihkan</Text>
             </TouchableOpacity>
           )}
@@ -175,7 +172,7 @@ export const HistoryScreen: React.FC = () => {
 
         {history.length === 0 ? (
           <View style={styles.emptyCard}>
-            <Ionicons name="file-tray-outline" size={44} color="#94A3B8" />
+            <Ionicons name="file-tray-outline" size={40} color={COLORS.muted} />
             <Text style={styles.emptyTitle}>Belum Ada Catatan Konsultasi</Text>
             <Text style={styles.emptyDesc}>
               Diagnosis yang Anda lakukan akan tersimpan secara otomatis dan aman di penyimpanan lokal HP ini.
@@ -189,12 +186,12 @@ export const HistoryScreen: React.FC = () => {
                 <View style={styles.historyCardTop}>
                   <View style={styles.historyInfo}>
                     <View style={styles.dateBadge}>
-                      <Ionicons name="calendar-outline" size={11} color="#64748B" />
+                      <Ionicons name="calendar-outline" size={11} color={COLORS.muted} />
                       <Text style={styles.dateBadgeText}>
                         {item.date} • {item.time}
                       </Text>
                     </View>
-                    <Text style={styles.diseaseName}>{item.diseaseName}</Text>
+                    <Text style={styles.diseaseName} numberOfLines={1}>{item.diseaseName}</Text>
                   </View>
                   <View style={styles.pctBadge}>
                     <Text style={styles.pctText}>{item.percentage}%</Text>
@@ -204,7 +201,7 @@ export const HistoryScreen: React.FC = () => {
 
                 <View style={styles.historyCardBottom}>
                   <View style={styles.symptomIndicator}>
-                    <Ionicons name="checkbox-outline" size={14} color="#0284C7" />
+                    <Ionicons name="checkbox-outline" size={13} color={COLORS.brand} />
                     <Text style={styles.symptomText}>
                       {item.symptomsCount} Gejala terkonfirmasi
                     </Text>
@@ -216,7 +213,7 @@ export const HistoryScreen: React.FC = () => {
                       onPress={() => openDiseaseDetail(diseaseObj)}
                     >
                       <Text style={styles.detailBtnText}>Lihat Solusi</Text>
-                      <Ionicons name="arrow-forward" size={13} color="#0284C7" />
+                      <Ionicons name="arrow-forward" size={12} color={COLORS.brand} />
                     </TouchableOpacity>
                   )}
                 </View>
@@ -235,47 +232,48 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.canvas
   },
   scroll: {
-    paddingHorizontal: 20,
+    paddingHorizontal: 16,
     paddingTop: 8,
-    paddingBottom: 115
+    paddingBottom: 20
   },
   dateSelector: {
-    paddingVertical: 10,
+    paddingVertical: 8,
     gap: 8,
     flexDirection: 'row',
     alignItems: 'center'
   },
   datePill: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+    borderRadius: 18,
     backgroundColor: COLORS.surface,
     borderWidth: 1,
-    borderColor: '#E2E8F0'
+    borderColor: COLORS.line
   },
   datePillActive: {
-    backgroundColor: '#0F172A',
-    borderColor: '#0F172A'
+    backgroundColor: COLORS.brandNavy,
+    borderColor: COLORS.brandNavy
   },
   datePillText: {
-    fontSize: 12,
+    fontSize: 11.5,
     fontWeight: '700',
-    color: '#64748B'
+    color: COLORS.muted
   },
   datePillTextActive: {
     color: '#FFFFFF'
   },
   topBentoRow: {
     flexDirection: 'row',
-    gap: 12,
-    marginTop: 8,
-    marginBottom: 16
+    gap: 10,
+    marginTop: 6,
+    marginBottom: 14
   },
   bentoCard: {
     flex: 1,
-    borderRadius: 24,
-    padding: 16,
-    minHeight: 120,
+    borderRadius: 20,
+    padding: 14,
+    borderWidth: 1,
+    minHeight: 110,
     justifyContent: 'space-between'
   },
   bentoTop: {
@@ -284,78 +282,80 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between'
   },
   bentoTitle: {
-    fontSize: 12,
+    fontSize: 11.5,
     fontWeight: '700',
-    color: '#334155'
+    color: COLORS.inkSecondary
   },
   bentoIconCircle: {
-    width: 26,
-    height: 26,
-    borderRadius: 13,
-    backgroundColor: 'rgba(255,255,255,0.7)',
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: 'rgba(255,255,255,0.8)',
     alignItems: 'center',
     justifyContent: 'center'
   },
   bentoValueCircle: {
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(255,255,255,0.85)',
-    width: 64,
-    height: 64,
-    borderRadius: 32,
+    backgroundColor: 'rgba(255,255,255,0.9)',
+    width: 56,
+    height: 56,
+    borderRadius: 28,
     alignSelf: 'center',
-    marginTop: 8
+    marginTop: 6
   },
   bentoBigNumber: {
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: '900',
-    color: '#0F172A'
+    color: COLORS.ink
   },
   bentoSubText: {
     fontSize: 9,
     fontWeight: '600',
-    color: '#64748B'
+    color: COLORS.muted
   },
   bentoChartWrap: {
     alignItems: 'center',
-    marginTop: 4
+    marginTop: 2
   },
   miniWaveContainer: {
     flexDirection: 'row',
     alignItems: 'flex-end',
     gap: 4,
-    height: 38,
+    height: 34,
     marginBottom: 4
   },
   waveDot: {
-    width: 5,
+    width: 4.5,
     borderRadius: 3,
-    backgroundColor: '#A855F7'
+    backgroundColor: COLORS.brand
   },
   bentoAccNumber: {
     fontSize: 15,
     fontWeight: '900',
-    color: '#581C87'
+    color: COLORS.brandDark
   },
   chartBentoCard: {
-    backgroundColor: '#E0F2FE',
-    borderRadius: 24,
-    padding: 18,
-    marginBottom: 20
+    backgroundColor: COLORS.bentoBlue,
+    borderRadius: 22,
+    padding: 16,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: COLORS.bentoBlueBorder
   },
   chartHeader: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     justifyContent: 'space-between',
-    marginBottom: 16
+    marginBottom: 12
   },
   chartTotalNumber: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '900',
     color: '#0369A1'
   },
   chartSubtitle: {
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '600',
     color: '#0284C7',
     marginTop: 2
@@ -363,63 +363,63 @@ const styles = StyleSheet.create({
   filterPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.8)',
+    backgroundColor: 'rgba(255,255,255,0.85)',
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 14,
     gap: 4
   },
   filterPillText: {
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: '700',
-    color: '#0284C7'
+    color: COLORS.brandDark
   },
   barChartContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-end',
-    height: 110,
-    paddingTop: 10
+    height: 95,
+    paddingTop: 8
   },
   barCol: {
     alignItems: 'center',
-    gap: 6
+    gap: 5
   },
   barPillTrack: {
-    width: 24,
-    height: 80,
-    backgroundColor: 'rgba(255,255,255,0.6)',
-    borderRadius: 12,
+    width: 22,
+    height: 70,
+    backgroundColor: 'rgba(255,255,255,0.5)',
+    borderRadius: 11,
     justifyContent: 'flex-end',
     overflow: 'hidden'
   },
   barPillFill: {
     width: '100%',
     backgroundColor: '#7DD3FC',
-    borderRadius: 12
+    borderRadius: 11
   },
   barPillFillActive: {
-    backgroundColor: '#0284C7'
+    backgroundColor: COLORS.brand
   },
   barDayText: {
-    fontSize: 10,
+    fontSize: 9.5,
     fontWeight: '700',
     color: '#0284C7'
   },
   barDayTextActive: {
-    color: '#0F172A',
+    color: COLORS.ink,
     fontWeight: '900'
   },
   recordsSectionHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 12
+    marginBottom: 10
   },
   sectionTitle: {
-    fontSize: 13,
+    fontSize: 12.5,
     fontWeight: '800',
-    color: '#334155',
+    color: COLORS.inkSecondary,
     textTransform: 'uppercase',
     letterSpacing: 0.5
   },
@@ -427,54 +427,54 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    paddingHorizontal: 8,
-    paddingVertical: 4
+    paddingHorizontal: 6,
+    paddingVertical: 3
   },
   clearBtnText: {
     fontSize: 11,
     fontWeight: '700',
-    color: '#EF4444'
+    color: COLORS.danger
   },
   emptyCard: {
     backgroundColor: COLORS.surface,
-    borderRadius: 22,
-    padding: 30,
+    borderRadius: 20,
+    padding: 24,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: COLORS.line,
     borderStyle: 'dashed'
   },
   emptyTitle: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '800',
-    color: '#334155',
-    marginTop: 12,
-    marginBottom: 6
+    color: COLORS.ink,
+    marginTop: 10,
+    marginBottom: 4
   },
   emptyDesc: {
-    fontSize: 12,
-    color: '#64748B',
+    fontSize: 11.5,
+    color: COLORS.muted,
     textAlign: 'center',
-    lineHeight: 18
+    lineHeight: 16
   },
   historyCard: {
     backgroundColor: COLORS.surface,
-    borderRadius: 22,
-    padding: 16,
+    borderRadius: 20,
+    padding: 14,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
-    marginBottom: 12,
-    shadowColor: '#64748B',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.04,
-    shadowRadius: 8,
+    borderColor: COLORS.line,
+    marginBottom: 10,
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.03,
+    shadowRadius: 6,
     elevation: 2
   },
   historyCardTop: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     justifyContent: 'space-between',
-    gap: 12
+    gap: 10
   },
   historyInfo: {
     flex: 1
@@ -483,55 +483,55 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    marginBottom: 4
+    marginBottom: 3
   },
   dateBadgeText: {
-    fontSize: 10,
-    color: '#64748B',
+    fontSize: 9.5,
+    color: COLORS.muted,
     fontWeight: '600'
   },
   diseaseName: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '800',
-    color: '#0F172A',
-    lineHeight: 20
+    color: COLORS.ink,
+    lineHeight: 18
   },
   pctBadge: {
-    backgroundColor: '#F0F9FF',
+    backgroundColor: COLORS.bentoBlue,
     borderWidth: 1,
-    borderColor: '#BAE6FD',
-    borderRadius: 14,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
+    borderColor: COLORS.bentoBlueBorder,
+    borderRadius: 12,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
     alignItems: 'center'
   },
   pctText: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '900',
-    color: '#0284C7'
+    color: COLORS.brand
   },
   pctLabel: {
-    fontSize: 9,
+    fontSize: 8.5,
     fontWeight: '800',
-    color: '#0284C7'
+    color: COLORS.brand
   },
   historyCardBottom: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: 12,
-    paddingTop: 10,
+    marginTop: 10,
+    paddingTop: 8,
     borderTopWidth: 1,
-    borderTopColor: '#F1F5F9'
+    borderTopColor: COLORS.lineSubtle
   },
   symptomIndicator: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6
+    gap: 5
   },
   symptomText: {
-    fontSize: 11,
-    color: '#64748B',
+    fontSize: 10.5,
+    color: COLORS.muted,
     fontWeight: '600'
   },
   detailBtn: {
@@ -540,8 +540,8 @@ const styles = StyleSheet.create({
     gap: 4
   },
   detailBtnText: {
-    fontSize: 12,
+    fontSize: 11.5,
     fontWeight: '700',
-    color: '#0284C7'
+    color: COLORS.brand
   }
 });

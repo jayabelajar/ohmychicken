@@ -1,30 +1,38 @@
 export const COLORS = {
-  // Brand Blues
-  brand: '#2563EB', // Vibrant Blue
-  brandDark: '#1E40AF',
-  brandNavy: '#0F172A',
-  brandLight: '#EFF6FF',
-  brandAccent: '#0284C7',
+  // Brand Blue Hierarchy (Konsisten Nuansa Biru AyamCare)
+  brand: '#2563EB',         // Primary Blue
+  brandDark: '#1D4ED8',     // Deep Royal Blue
+  brandNavy: '#0F172A',     // Deep Slate Navy for high-contrast pills & text
+  brandLight: '#EFF6FF',    // Ultra Soft Blue Surface
+  brandAccent: '#0284C7',   // Medical Cyan Blue
+  brandBorder: '#BFDBFE',   // Subtle Blue Border
 
-  // Canvas & Surfaces
-  canvas: '#F4F7FB', // Soft modern canvas as in image
-  surface: '#FFFFFF',
-  surfaceSubtle: '#F8FAFC',
-  cardMint: '#ECFDF5',
-  cardLavender: '#F5F3FF',
-  cardSky: '#E0F2FE',
-  cardPeach: '#FFF7ED',
-  cardRose: '#FFF1F2',
+  // Backgrounds & Surfaces
+  canvas: '#F8FAFC',        // Crisp Slate Canvas (clean, anti-AI-slop)
+  surface: '#FFFFFF',       // Pure White Card
+  surfaceSubtle: '#F1F5F9', // Light Slate
 
-  // Inks & Typography
-  ink: '#111827',
-  inkSecondary: '#374151',
-  muted: '#6B7280',
-  line: '#E5E7EB',
-  lineSubtle: '#F3F4F6',
+  // Bento Soft Tints (Clean & Cohesive)
+  bentoBlue: '#EFF6FF',     // Soft Sky
+  bentoBlueBorder: '#DBEAFE',
+  bentoSlate: '#F1F5F9',    // Soft Slate
+  bentoSlateBorder: '#E2E8F0',
+  bentoMint: '#F0FDF4',     // Soft Emerald for safe/healthy
+  bentoMintBorder: '#DCFCE7',
 
-  // Functional
+  // Typography
+  ink: '#0F172A',           // Slate 900
+  inkSecondary: '#334155',  // Slate 700
+  muted: '#64748B',         // Slate 500
+  subtle: '#94A3B8',        // Slate 400
+  line: '#E2E8F0',          // Slate 200
+  lineSubtle: '#F1F5F9',
+
+  // Functional Status
   success: '#10B981',
+  successBg: '#ECFDF5',
   warning: '#F59E0B',
-  danger: '#EF4444'
+  warningBg: '#FFFBEB',
+  danger: '#EF4444',
+  dangerBg: '#FEF2F2'
 };

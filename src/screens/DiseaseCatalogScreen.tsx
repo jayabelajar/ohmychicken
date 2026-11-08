@@ -138,9 +138,9 @@ const styles = StyleSheet.create({
     color: '#64748B'
   },
   scroll: {
-    paddingHorizontal: 20,
-    paddingTop: 12,
-    paddingBottom: 115,
+    paddingHorizontal: 16,
+    paddingTop: 10,
+    paddingBottom: 20,
     gap: 12
   },
   card: {

@@ -1,16 +1,12 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Dimensions } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { COLORS } from '../constants/theme';
 import { useDiagnosisStore } from '../store/diagnosisStore';
 import { Header } from '../components/Header';
 import { DISEASES, SYMPTOMS } from '../data/knowledgeBase';
 
-const { width } = Dimensions.get('window');
-
 export const HomeScreen: React.FC = () => {
-  const insets = useSafeAreaInsets();
   const setActiveScreen = useDiagnosisStore((s) => s.setActiveScreen);
   const setActiveTab = useDiagnosisStore((s) => s.setActiveTab);
   const clearSymptoms = useDiagnosisStore((s) => s.clearSymptoms);
@@ -30,13 +26,10 @@ export const HomeScreen: React.FC = () => {
       <Header />
 
       <ScrollView
-        contentContainerStyle={[
-          styles.scroll,
-          { paddingBottom: 100 + Math.max(insets.bottom, 16) }
-        ]}
+        contentContainerStyle={styles.scroll}
         showsVerticalScrollIndicator={false}
       >
-        {/* HERO ACTIVITY CARD (Matching Reference Image 2 Style) */}
+        {/* HERO ACTIVITY CARD (Bento Kurva Mingguan - Matching Slide 2) */}
         <View style={styles.activityCard}>
           <View style={styles.activityHeader}>
             <View style={styles.metricPair}>
@@ -48,17 +41,21 @@ export const HomeScreen: React.FC = () => {
               </View>
               <View>
                 <Text style={styles.metricLabel}>Rata-rata CF</Text>
-                <Text style={styles.metricVal}>88%</Text>
+                <Text style={styles.metricVal}>
+                  {history.length > 0
+                    ? `${Math.round(history.reduce((a, b) => a + b.percentage, 0) / history.length)}%`
+                    : '100%'}
+                </Text>
               </View>
             </View>
 
             <View style={styles.filterPill}>
               <Text style={styles.filterPillText}>Mingguan</Text>
-              <Ionicons name="chevron-down" size={12} color={COLORS.ink} />
+              <Ionicons name="chevron-down" size={12} color={COLORS.brandNavy} />
             </View>
           </View>
 
-          {/* Clean Graphic Sparkline Bars */}
+          {/* Clean Graphic Sparkline Bars in Nuansa Biru */}
           <View style={styles.chartContainer}>
             {[
               { day: 'Sen', val: 40, active: false },
@@ -66,7 +63,7 @@ export const HomeScreen: React.FC = () => {
               { day: 'Rab', val: 85, active: false },
               { day: 'Kam', val: 50, active: false },
               { day: 'Jum', val: 95, active: true },
-              { day: 'Sab', val: 30, active: false },
+              { day: 'Sab', val: 35, active: false },
               { day: 'Min', val: 70, active: false }
             ].map((bar, i) => (
               <View key={i} style={styles.barCol}>
@@ -85,27 +82,25 @@ export const HomeScreen: React.FC = () => {
           </View>
         </View>
 
-        {/* SECTION: MONITORING HARI INI (Matching Reference Image "Today Activity") */}
+        {/* SECTION: MONITORING HARI INI */}
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Monitoring Kasus Terbaru 🐥</Text>
+          <Text style={styles.sectionTitle}>Monitoring Kasus Terkini</Text>
           <TouchableOpacity onPress={() => setActiveTab('riwayat')}>
             <Text style={styles.sectionLink}>Lihat Semua</Text>
           </TouchableOpacity>
         </View>
 
         <View style={styles.todayCard}>
-          {/* Left Mini Bento Metric */}
           <View style={styles.todayLeftBento}>
             <View style={styles.todayIconCircle}>
-              <Ionicons name="pulse" size={20} color="#7C3AED" />
+              <Ionicons name="pulse" size={18} color={COLORS.brand} />
             </View>
             <Text style={styles.todayBentoNumber}>
               {lastCase ? `${lastCase.percentage}%` : '100%'}
             </Text>
-            <Text style={styles.todayBentoLabel}>Akurasi Terakhir</Text>
+            <Text style={styles.todayBentoLabel}>Akurasi CF</Text>
           </View>
 
-          {/* Right Case Overview */}
           <View style={styles.todayRightList}>
             {lastCase ? (
               <TouchableOpacity
@@ -118,15 +113,14 @@ export const HomeScreen: React.FC = () => {
               >
                 <View style={styles.caseIndicatorBar} />
                 <View style={{ flex: 1 }}>
-                  <Text style={styles.caseTitle}>{lastCase.diseaseName}</Text>
-                  <Text style={styles.caseSubtitle}>
-                    {lastCase.symptomsCount} gejala • Status: {lastCase.riskLevel}
+                  <Text style={styles.caseTitle} numberOfLines={1}>{lastCase.diseaseName}</Text>
+                  <Text style={styles.caseSubtitle} numberOfLines={1}>
+                    {lastCase.symptomsCount} gejala • Risiko: {lastCase.riskLevel}
                   </Text>
                 </View>
-                <Text style={styles.caseScore}>{lastCase.percentage}%</Text>
               </TouchableOpacity>
             ) : (
-              <Text style={styles.noCaseText}>Belum ada sesi diagnosis terbaru</Text>
+              <Text style={styles.noCaseText}>Belum ada sesi diagnosis tersimpan</Text>
             )}
 
             <TouchableOpacity
@@ -134,7 +128,7 @@ export const HomeScreen: React.FC = () => {
               activeOpacity={0.85}
               onPress={handleStartDiagnosis}
             >
-              <Ionicons name="add-circle" size={16} color={COLORS.surface} />
+              <Ionicons name="add-circle" size={15} color="#FFFFFF" />
               <Text style={styles.newConsultText}>Mulai Konsultasi Baru</Text>
             </TouchableOpacity>
           </View>
@@ -144,44 +138,44 @@ export const HomeScreen: React.FC = () => {
         <View style={styles.bentoRow}>
           {/* Bento 1: Katalog Penyakit */}
           <TouchableOpacity
-            style={[styles.bentoBox, { backgroundColor: '#EFF6FF' }]}
+            style={[styles.bentoBox, { backgroundColor: COLORS.bentoBlue, borderColor: COLORS.bentoBlueBorder }]}
             activeOpacity={0.8}
             onPress={() => setActiveTab('katalog')}
           >
             <View style={styles.bentoTop}>
               <View style={[styles.bentoIconWrap, { backgroundColor: '#DBEAFE' }]}>
-                <Ionicons name="book-outline" size={18} color="#2563EB" />
+                <Ionicons name="book-outline" size={16} color={COLORS.brandDark} />
               </View>
-              <Ionicons name="arrow-forward" size={14} color="#2563EB" />
+              <Ionicons name="arrow-forward" size={13} color={COLORS.brandDark} />
             </View>
             <Text style={styles.bentoNumber}>{DISEASES.length}</Text>
             <Text style={styles.bentoTitle}>Penyakit Broiler</Text>
-            <Text style={styles.bentoDesc}>13 Patologi veteriner</Text>
+            <Text style={styles.bentoDesc}>13 Patologi data</Text>
           </TouchableOpacity>
 
           {/* Bento 2: Indikator Gejala */}
           <TouchableOpacity
-            style={[styles.bentoBox, { backgroundColor: '#F0FDF4' }]}
+            style={[styles.bentoBox, { backgroundColor: COLORS.surface, borderColor: COLORS.line }]}
             activeOpacity={0.8}
             onPress={handleStartDiagnosis}
           >
             <View style={styles.bentoTop}>
-              <View style={[styles.bentoIconWrap, { backgroundColor: '#DCFCE7' }]}>
-                <Ionicons name="list-outline" size={18} color="#16A34A" />
+              <View style={[styles.bentoIconWrap, { backgroundColor: COLORS.bentoBlue }]}>
+                <Ionicons name="list-outline" size={16} color={COLORS.brand} />
               </View>
-              <Ionicons name="arrow-forward" size={14} color="#16A34A" />
+              <Ionicons name="arrow-forward" size={13} color={COLORS.brand} />
             </View>
             <Text style={styles.bentoNumber}>{SYMPTOMS.length}</Text>
             <Text style={styles.bentoTitle}>Indikator Gejala</Text>
-            <Text style={styles.bentoDesc}>5 Kategori observasi</Text>
+            <Text style={styles.bentoDesc}>5 Kategori klinis</Text>
           </TouchableOpacity>
         </View>
 
-        {/* WORKOUT GOALS STYLE CARD: BIOSEKURITI & RISET (Matching Reference Image 2) */}
+        {/* BIOSECURITY PROTOCOL CARD (Bento Style) */}
         <View style={styles.goalCard}>
           <View style={styles.goalLeft}>
             <View style={styles.goalIconCircle}>
-              <Ionicons name="shield-checkmark" size={20} color="#D97706" />
+              <Ionicons name="shield-checkmark" size={18} color="#0284C7" />
             </View>
             <View style={{ flex: 1 }}>
               <Text style={styles.goalTitle}>Protokol Biosekuriti Kandang</Text>
@@ -193,18 +187,21 @@ export const HomeScreen: React.FC = () => {
           </View>
         </View>
 
-        {/* RESEARCH BENCH BUTTON CARD */}
+        {/* RESEARCH BENCH TEST CARD */}
         <TouchableOpacity style={styles.benchCard} activeOpacity={0.85} onPress={openTestBench}>
           <View style={styles.benchLeft}>
             <View style={styles.benchIconCircle}>
-              <Ionicons name="flask" size={18} color="#2563EB" />
+              <Ionicons name="flask" size={17} color={COLORS.brand} />
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={styles.benchTitle}>Uji Validasi 10 Sampel Jurnal</Text>
-              <Text style={styles.benchSub}>Tabel 6 Jurnal Algoritma ITG (2024)</Text>
+              <View style={styles.benchBadgeRow}>
+                <Text style={styles.benchBadgeText}>Validasi Ilmiah</Text>
+              </View>
+              <Text style={styles.benchTitle}>Uji Sampel Jurnal Agustin (2024)</Text>
+              <Text style={styles.benchSub}>Verifikasi 4 sampel data uji makalah ITG</Text>
             </View>
           </View>
-          <Ionicons name="chevron-forward" size={18} color={COLORS.muted} />
+          <Ionicons name="chevron-forward" size={16} color={COLORS.brand} />
         </TouchableOpacity>
       </ScrollView>
     </View>
@@ -217,17 +214,22 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.canvas
   },
   scroll: {
-    paddingHorizontal: 20,
-    paddingTop: 8,
-    gap: 16
+    paddingHorizontal: 16,
+    paddingTop: 10,
+    paddingBottom: 20,
+    gap: 14
   },
   activityCard: {
-    backgroundColor: '#E0F2FE', // Soft sky blue tint matching image style
-    borderRadius: 28,
-    padding: 20,
-    gap: 16,
+    backgroundColor: COLORS.bentoBlue,
+    borderRadius: 22,
+    padding: 16,
     borderWidth: 1,
-    borderColor: '#BAE6FD'
+    borderColor: COLORS.bentoBlueBorder,
+    shadowColor: '#2563EB',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    elevation: 2
   },
   activityHeader: {
     flexDirection: 'row',
@@ -236,7 +238,7 @@ const styles = StyleSheet.create({
   },
   metricPair: {
     flexDirection: 'row',
-    gap: 24
+    gap: 20
   },
   metricLabel: {
     fontSize: 10,
@@ -252,46 +254,46 @@ const styles = StyleSheet.create({
   filterPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 16,
     gap: 4
   },
   filterPillText: {
     fontSize: 10,
     fontWeight: '700',
-    color: COLORS.ink
+    color: COLORS.brandNavy
   },
   chartContainer: {
     flexDirection: 'row',
     alignItems: 'flex-end',
     justifyContent: 'space-between',
-    height: 72,
+    height: 68,
     paddingTop: 8
   },
   barCol: {
     alignItems: 'center',
-    gap: 6
+    gap: 5
   },
   barTrack: {
-    width: 28,
-    height: 48,
-    backgroundColor: 'rgba(255, 255, 255, 0.45)',
-    borderRadius: 14,
+    width: 26,
+    height: 44,
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    borderRadius: 13,
     justifyContent: 'flex-end',
     overflow: 'hidden'
   },
   barFill: {
     width: '100%',
-    backgroundColor: '#38BDF8',
-    borderRadius: 14
+    backgroundColor: '#7DD3FC',
+    borderRadius: 13
   },
   barFillActive: {
-    backgroundColor: '#0284C7'
+    backgroundColor: COLORS.brand
   },
   barDay: {
-    fontSize: 9,
+    fontSize: 9.5,
     fontWeight: '600',
     color: '#0284C7'
   },
@@ -306,7 +308,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 2
   },
   sectionTitle: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '800',
     color: COLORS.ink,
     letterSpacing: -0.2
@@ -317,92 +319,92 @@ const styles = StyleSheet.create({
     color: COLORS.brand
   },
   todayCard: {
-    backgroundColor: '#F3E8FF', // Soft lavender tint matching reference image
-    borderRadius: 24,
-    padding: 16,
+    backgroundColor: COLORS.surface,
+    borderRadius: 22,
+    padding: 14,
     flexDirection: 'row',
-    gap: 14,
-    alignItems: 'center'
+    gap: 12,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: COLORS.line,
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.04,
+    shadowRadius: 8,
+    elevation: 2
   },
   todayLeftBento: {
-    width: 90,
-    height: 100,
-    backgroundColor: 'rgba(255, 255, 255, 0.7)',
-    borderRadius: 18,
+    width: 80,
+    height: 88,
+    backgroundColor: COLORS.bentoBlue,
+    borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 8,
-    gap: 4
+    padding: 6,
+    gap: 3
   },
   todayIconCircle: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: '#EDE9FE',
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: '#DBEAFE',
     alignItems: 'center',
     justifyContent: 'center'
   },
   todayBentoNumber: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '900',
-    color: '#5B21B6'
+    color: COLORS.brandDark
   },
   todayBentoLabel: {
     fontSize: 9,
     fontWeight: '600',
-    color: '#6D28D9',
-    textAlign: 'center'
+    color: '#0369A1'
   },
   todayRightList: {
     flex: 1,
-    gap: 10
+    justifyContent: 'center',
+    gap: 8
   },
   caseItem: {
-    backgroundColor: 'rgba(255, 255, 255, 0.85)',
-    padding: 10,
-    borderRadius: 14,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8
   },
   caseIndicatorBar: {
     width: 3,
-    height: 24,
-    borderRadius: 2,
-    backgroundColor: '#7C3AED'
+    height: 28,
+    backgroundColor: COLORS.brand,
+    borderRadius: 2
   },
   caseTitle: {
-    fontSize: 11,
-    fontWeight: '800',
+    fontSize: 12.5,
+    fontWeight: '700',
     color: COLORS.ink
   },
   caseSubtitle: {
-    fontSize: 9,
-    color: COLORS.muted
-  },
-  caseScore: {
-    fontSize: 12,
-    fontWeight: '900',
-    color: '#6D28D9'
+    fontSize: 10,
+    color: COLORS.muted,
+    marginTop: 1
   },
   noCaseText: {
     fontSize: 11,
-    color: COLORS.muted,
-    fontStyle: 'italic'
+    color: COLORS.muted
   },
   newConsultBtn: {
-    backgroundColor: '#1E293B',
+    backgroundColor: COLORS.brandNavy,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 10,
+    paddingVertical: 9,
+    paddingHorizontal: 12,
     borderRadius: 14,
     gap: 6
   },
   newConsultText: {
     fontSize: 11,
     fontWeight: '700',
-    color: COLORS.surface
+    color: '#FFFFFF'
   },
   bentoRow: {
     flexDirection: 'row',
@@ -410,11 +412,14 @@ const styles = StyleSheet.create({
   },
   bentoBox: {
     flex: 1,
-    borderRadius: 24,
-    padding: 16,
+    borderRadius: 20,
+    padding: 14,
     borderWidth: 1,
-    borderColor: 'rgba(226, 232, 240, 0.7)',
-    gap: 4
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.03,
+    shadowRadius: 6,
+    elevation: 1
   },
   bentoTop: {
     flexDirection: 'row',
@@ -423,36 +428,37 @@ const styles = StyleSheet.create({
     marginBottom: 8
   },
   bentoIconWrap: {
-    width: 34,
-    height: 34,
-    borderRadius: 12,
+    width: 30,
+    height: 30,
+    borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center'
   },
   bentoNumber: {
-    fontSize: 26,
+    fontSize: 20,
     fontWeight: '900',
-    color: COLORS.ink,
-    letterSpacing: -0.5
+    color: COLORS.ink
   },
   bentoTitle: {
     fontSize: 12,
-    fontWeight: '800',
-    color: COLORS.ink
+    fontWeight: '700',
+    color: COLORS.ink,
+    marginTop: 2
   },
   bentoDesc: {
     fontSize: 10,
-    color: COLORS.muted
+    color: COLORS.muted,
+    marginTop: 1
   },
   goalCard: {
-    backgroundColor: '#FEF3C7', // Soft peach/amber tint matching image
-    borderRadius: 22,
+    backgroundColor: COLORS.surface,
+    borderRadius: 20,
     padding: 14,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     borderWidth: 1,
-    borderColor: '#FDE68A'
+    borderColor: COLORS.line
   },
   goalLeft: {
     flexDirection: 'row',
@@ -461,48 +467,45 @@ const styles = StyleSheet.create({
     flex: 1
   },
   goalIconCircle: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
-    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#E0F2FE',
     alignItems: 'center',
     justifyContent: 'center'
   },
   goalTitle: {
-    fontSize: 12,
-    fontWeight: '800',
-    color: '#92400E'
+    fontSize: 12.5,
+    fontWeight: '700',
+    color: COLORS.ink
   },
   goalSub: {
     fontSize: 10,
-    color: '#B45309',
+    color: COLORS.muted,
     marginTop: 1
   },
   goalProgressBadge: {
-    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+    backgroundColor: '#F0FDF4',
+    borderWidth: 1,
+    borderColor: '#DCFCE7',
     paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 14
+    paddingVertical: 4,
+    borderRadius: 12
   },
   goalProgressText: {
     fontSize: 10,
-    fontWeight: '800',
-    color: '#B45309'
+    fontWeight: '700',
+    color: '#15803D'
   },
   benchCard: {
     backgroundColor: COLORS.surface,
-    borderRadius: 22,
+    borderRadius: 20,
     padding: 14,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     borderWidth: 1,
-    borderColor: COLORS.line,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.03,
-    shadowRadius: 6,
-    elevation: 1
+    borderColor: COLORS.bentoBlueBorder
   },
   benchLeft: {
     flexDirection: 'row',
@@ -511,16 +514,25 @@ const styles = StyleSheet.create({
     flex: 1
   },
   benchIconCircle: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
-    backgroundColor: COLORS.brandLight,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#DBEAFE',
     alignItems: 'center',
     justifyContent: 'center'
   },
-  benchTitle: {
-    fontSize: 12,
+  benchBadgeRow: {
+    marginBottom: 2
+  },
+  benchBadgeText: {
+    fontSize: 9.5,
     fontWeight: '800',
+    color: COLORS.brandDark,
+    textTransform: 'uppercase'
+  },
+  benchTitle: {
+    fontSize: 12.5,
+    fontWeight: '700',
     color: COLORS.ink
   },
   benchSub: {

@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, Dimensions } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS } from '../constants/theme';
 import { useDiagnosisStore } from '../store/diagnosisStore';
-
-const { width } = Dimensions.get('window');
 
 const SLIDES = [
   {
@@ -12,9 +10,9 @@ const SLIDES = [
     title: 'Deteksi Dini Kesehatan Broiler Anda',
     description:
       'Identifikasi gejala klinis ayam secara cepat dan akurat menggunakan mesin inferensi berbasis bukti pakar ternak.',
-    icon: 'medkit',
+    icon: 'medkit' as const,
     cardBg: '#EFF6FF',
-    iconColor: '#2563EB',
+    iconColor: COLORS.brand,
     features: ['13 Penyakit Terdata', '40 Indikator Gejala', 'Solusi Tindakan Cepat']
   },
   {
@@ -22,9 +20,9 @@ const SLIDES = [
     title: 'Perhitungan Certainty Factor (CF)',
     description:
       'Skor kepastian dihasilkan dari kombinasi derajat keyakinan peternak dan bobot pakar (MB - MD) secara deterministik.',
-    icon: 'analytics',
-    cardBg: '#F5F3FF',
-    iconColor: '#7C3AED',
+    icon: 'analytics' as const,
+    cardBg: '#EFF6FF',
+    iconColor: COLORS.brandDark,
     features: ['Bobot Pakar Jurnal 2024', 'Diferensial Diagnosis', 'Langkah Hitung Transparan']
   },
   {
@@ -32,9 +30,9 @@ const SLIDES = [
     title: '100% Bekerja Tanpa Internet',
     description:
       'Akses basis pengetahuan dan riwayat diagnosis langsung di area perkandangan tanpa perlu sinyal maupun paket data.',
-    icon: 'cloud-offline',
-    cardBg: '#ECFDF5',
-    iconColor: '#059669',
+    icon: 'cloud-offline' as const,
+    cardBg: '#EFF6FF',
+    iconColor: COLORS.brandAccent,
     features: ['Penyimpanan Lokal Aman', 'Riwayat per Peternak', 'Ringan & Responsif']
   }
 ];
@@ -54,201 +52,209 @@ export const OnboardingScreen: React.FC = () => {
     }
   };
 
+  const handleSkip = () => {
+    finishOnboarding();
+  };
+
   return (
-    <SafeAreaView style={styles.safe}>
-      <View style={styles.container}>
-        {/* Top App Identity */}
-        <View style={styles.topBar}>
-          <View style={styles.logoRow}>
-            <View style={styles.logoBadge}>
-              <Ionicons name="pulse" size={16} color={COLORS.surface} />
-            </View>
-            <Text style={styles.logoText}>AyamCare</Text>
-          </View>
-          <TouchableOpacity onPress={finishOnboarding}>
+    <View style={styles.container}>
+      {/* Top Bar with Skip */}
+      <View style={styles.topBar}>
+        <View style={styles.brandBadge}>
+          <Ionicons name="pulse" size={14} color={COLORS.brand} />
+          <Text style={styles.brandBadgeText}>AyamCare Broiler</Text>
+        </View>
+        {!isLast && (
+          <TouchableOpacity onPress={handleSkip} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
             <Text style={styles.skipText}>Lewati</Text>
           </TouchableOpacity>
-        </View>
+        )}
+      </View>
 
-        {/* Center Illustration Hero Card (Matching Reference Style) */}
-        <View style={[styles.heroCard, { backgroundColor: slide.cardBg }]}>
-          <View style={[styles.heroCircle, { backgroundColor: slide.iconColor }]}>
-            <Ionicons name={slide.icon as any} size={48} color={COLORS.surface} />
-          </View>
-
-          {/* Feature Badges in Card */}
-          <View style={styles.badgeWrap}>
-            {slide.features.map((feat, i) => (
-              <View key={i} style={styles.pillBadge}>
-                <Ionicons name="checkmark-circle" size={12} color={slide.iconColor} />
-                <Text style={styles.pillBadgeText}>{feat}</Text>
-              </View>
-            ))}
+      {/* Main Illustration Circle (Matching Reference Image 1) */}
+      <View style={styles.heroWrap}>
+        <View style={[styles.heroCircle, { backgroundColor: slide.cardBg }]}>
+          <View style={styles.iconCircle}>
+            <Ionicons name={slide.icon} size={54} color={slide.iconColor} />
           </View>
         </View>
 
-        {/* Bottom Content Area */}
-        <View style={styles.contentWrap}>
-          {/* Tag */}
-          <View style={styles.tagWrap}>
-            <Text style={[styles.tagText, { color: slide.iconColor }]}>{slide.tag}</Text>
-          </View>
-
-          {/* Headline Title */}
-          <Text style={styles.titleText}>{slide.title}</Text>
-          <Text style={styles.descText}>{slide.description}</Text>
-
-          {/* Pagination Dots */}
-          <View style={styles.dotRow}>
-            {SLIDES.map((_, idx) => (
-              <View
-                key={idx}
-                style={[
-                  styles.dot,
-                  idx === currentSlide && [styles.dotActive, { backgroundColor: slide.iconColor }]
-                ]}
-              />
-            ))}
-          </View>
-
-          {/* Pill CTA Button (Matching Reference Image) */}
-          <TouchableOpacity
-            style={styles.ctaButton}
-            activeOpacity={0.85}
-            onPress={handleNext}
-          >
-            <Text style={styles.ctaText}>
-              {isLast ? 'Mulai Sekarang' : 'Lanjutkan'}
-            </Text>
-            <Ionicons name="arrow-forward" size={18} color={COLORS.surface} />
-          </TouchableOpacity>
+        {/* Feature Pills under hero */}
+        <View style={styles.badgeWrap}>
+          {slide.features.map((feat, i) => (
+            <View key={i} style={styles.pillBadge}>
+              <Ionicons name="checkmark-circle" size={12} color={slide.iconColor} />
+              <Text style={styles.pillBadgeText}>{feat}</Text>
+            </View>
+          ))}
         </View>
       </View>
-    </SafeAreaView>
+
+      {/* Bottom Content Area */}
+      <View style={styles.contentWrap}>
+        {/* Tag */}
+        <View style={styles.tagWrap}>
+          <Text style={[styles.tagText, { color: slide.iconColor }]}>{slide.tag}</Text>
+        </View>
+
+        {/* Headline Title */}
+        <Text style={styles.titleText}>{slide.title}</Text>
+        <Text style={styles.descText}>{slide.description}</Text>
+
+        {/* Pagination Dots */}
+        <View style={styles.dotRow}>
+          {SLIDES.map((_, idx) => (
+            <View
+              key={idx}
+              style={[
+                styles.dot,
+                idx === currentSlide && [styles.dotActive, { backgroundColor: slide.iconColor }]
+              ]}
+            />
+          ))}
+        </View>
+
+        {/* Pill CTA Button (Matching Reference Image) */}
+        <TouchableOpacity
+          style={styles.ctaButton}
+          activeOpacity={0.85}
+          onPress={handleNext}
+        >
+          <Text style={styles.ctaText}>
+            {isLast ? 'Mulai Sekarang' : 'Lanjutkan'}
+          </Text>
+          <Ionicons name="arrow-forward" size={18} color="#FFFFFF" />
+        </TouchableOpacity>
+      </View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  safe: {
-    flex: 1,
-    backgroundColor: COLORS.canvas
-  },
   container: {
     flex: 1,
-    paddingHorizontal: 24,
-    paddingTop: 12,
-    paddingBottom: 24,
+    backgroundColor: COLORS.canvas,
+    paddingHorizontal: 20,
+    paddingTop: 10,
+    paddingBottom: 20,
     justifyContent: 'space-between'
   },
   topBar: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 8
+    paddingVertical: 6
   },
-  logoRow: {
+  brandBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8
+    gap: 6,
+    backgroundColor: COLORS.bentoBlue,
+    borderWidth: 1,
+    borderColor: COLORS.bentoBlueBorder,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 20
   },
-  logoBadge: {
-    width: 28,
-    height: 28,
-    borderRadius: 8,
-    backgroundColor: COLORS.brand,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  logoText: {
-    fontSize: 16,
+  brandBadgeText: {
+    fontSize: 11,
     fontWeight: '800',
-    color: COLORS.ink,
-    letterSpacing: -0.3
+    color: COLORS.brandDark
   },
   skipText: {
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: '700',
     color: COLORS.muted
   },
-  heroCard: {
-    width: '100%',
-    height: width * 0.76,
-    borderRadius: 32,
+  heroWrap: {
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 20,
-    gap: 16,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.6)',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.04,
-    shadowRadius: 12,
-    elevation: 2
+    paddingVertical: 10
   },
   heroCircle: {
+    width: 170,
+    height: 170,
+    borderRadius: 85,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: COLORS.bentoBlueBorder,
+    shadowColor: '#2563EB',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.08,
+    shadowRadius: 14,
+    elevation: 3
+  },
+  iconCircle: {
     width: 90,
     height: 90,
     borderRadius: 45,
+    backgroundColor: COLORS.surface,
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.18,
-    shadowRadius: 12,
-    elevation: 6
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 6,
+    elevation: 2
   },
   badgeWrap: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
-    gap: 8,
-    marginTop: 6
+    gap: 6,
+    marginTop: 14,
+    maxWidth: 320
   },
   pillBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.85)',
-    paddingHorizontal: 10,
+    backgroundColor: COLORS.surface,
+    paddingHorizontal: 9,
     paddingVertical: 4,
     borderRadius: 14,
-    gap: 4
+    gap: 4,
+    borderWidth: 1,
+    borderColor: COLORS.line
   },
   pillBadgeText: {
-    fontSize: 10,
+    fontSize: 10.5,
     fontWeight: '700',
-    color: COLORS.inkSecondary
+    color: COLORS.ink
   },
   contentWrap: {
-    gap: 8,
-    paddingTop: 8
+    gap: 10,
+    alignItems: 'center'
   },
   tagWrap: {
-    alignSelf: 'flex-start'
+    backgroundColor: COLORS.bentoBlue,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12
   },
   tagText: {
     fontSize: 10,
     fontWeight: '800',
-    letterSpacing: 0.6
+    letterSpacing: 0.5
   },
   titleText: {
-    fontSize: 24,
-    fontWeight: '800',
+    fontSize: 21,
+    fontWeight: '900',
     color: COLORS.ink,
-    lineHeight: 30,
-    letterSpacing: -0.4
+    textAlign: 'center',
+    lineHeight: 27
   },
   descText: {
     fontSize: 12,
     color: COLORS.muted,
+    textAlign: 'center',
     lineHeight: 18,
-    marginTop: 2
+    paddingHorizontal: 10
   },
   dotRow: {
     flexDirection: 'row',
-    alignItems: 'center',
     gap: 6,
-    paddingVertical: 14
+    marginVertical: 4
   },
   dot: {
     width: 6,
@@ -257,26 +263,27 @@ const styles = StyleSheet.create({
     backgroundColor: '#CBD5E1'
   },
   dotActive: {
-    width: 22,
+    width: 20,
     borderRadius: 4
   },
   ctaButton: {
-    backgroundColor: '#1E293B', // Reference image style: dark modern pill
+    backgroundColor: COLORS.brandNavy,
+    width: '100%',
+    paddingVertical: 14,
+    borderRadius: 28,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 16,
-    borderRadius: 30,
     gap: 8,
-    shadowColor: '#1E293B',
+    shadowColor: '#0F172A',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 8,
-    elevation: 4
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+    elevation: 5
   },
   ctaText: {
-    color: COLORS.surface,
     fontSize: 14,
-    fontWeight: '700'
+    fontWeight: '800',
+    color: '#FFFFFF'
   }
 });

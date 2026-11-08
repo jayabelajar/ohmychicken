@@ -1,18 +1,15 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { COLORS } from '../constants/theme';
 import { useDiagnosisStore, TabKey } from '../store/diagnosisStore';
 
 export const Navbar: React.FC = () => {
-  const insets = useSafeAreaInsets();
   const activeTab = useDiagnosisStore((s) => s.activeTab);
   const setActiveTab = useDiagnosisStore((s) => s.setActiveTab);
   const setActiveScreen = useDiagnosisStore((s) => s.setActiveScreen);
   const clearSymptoms = useDiagnosisStore((s) => s.clearSymptoms);
 
-  // 5 Menus requested
   const tabs: Array<{
     key: TabKey;
     label: string;
@@ -22,7 +19,7 @@ export const Navbar: React.FC = () => {
   }> = [
     { key: 'beranda', label: 'Beranda', icon: 'home-outline', activeIcon: 'home' },
     { key: 'katalog', label: 'Katalog', icon: 'book-outline', activeIcon: 'book' },
-    { key: 'diagnosis', label: 'Diagnosa', icon: 'add', activeIcon: 'add', isAction: true },
+    { key: 'diagnosis', label: 'Diagnosa', icon: 'medkit', activeIcon: 'medkit', isAction: true },
     { key: 'riwayat', label: 'Riwayat', icon: 'bar-chart-outline', activeIcon: 'bar-chart' },
     { key: 'profil', label: 'Profil', icon: 'person-outline', activeIcon: 'person' }
   ];
@@ -36,11 +33,8 @@ export const Navbar: React.FC = () => {
     }
   };
 
-  // Safe bottom clearance for Android 3-button floating navigation and gesture bars
-  const bottomOffset = Platform.OS === 'android' ? Math.max(insets.bottom, 16) : Math.max(insets.bottom, 14);
-
   return (
-    <View style={[styles.floatingWrapper, { bottom: bottomOffset }]}>
+    <View style={styles.navWrapper}>
       <View style={styles.floatingBar}>
         {tabs.map((tab) => {
           const isActive = activeTab === tab.key;
@@ -49,14 +43,16 @@ export const Navbar: React.FC = () => {
             return (
               <TouchableOpacity
                 key={tab.key}
-                style={styles.actionButton}
+                style={styles.actionTab}
                 activeOpacity={0.85}
                 onPress={() => handleTabPress(tab)}
               >
                 <View style={styles.actionCircle}>
-                  <Ionicons name="medkit" size={20} color={COLORS.surface} />
+                  <Ionicons name="medkit" size={18} color="#FFFFFF" />
                 </View>
-                <Text style={styles.actionLabel}>Diagnosa</Text>
+                <Text style={styles.actionLabel} numberOfLines={1}>
+                  {tab.label}
+                </Text>
               </TouchableOpacity>
             );
           }
@@ -71,11 +67,14 @@ export const Navbar: React.FC = () => {
               <View style={[styles.iconWrap, isActive && styles.iconWrapActive]}>
                 <Ionicons
                   name={isActive ? tab.activeIcon : tab.icon}
-                  size={20}
-                  color={isActive ? COLORS.surface : COLORS.muted}
+                  size={19}
+                  color={isActive ? '#FFFFFF' : COLORS.muted}
                 />
               </View>
-              <Text style={[styles.tabLabel, isActive && styles.tabLabelActive]}>
+              <Text
+                style={[styles.tabLabel, isActive && styles.tabLabelActive]}
+                numberOfLines={1}
+              >
                 {tab.label}
               </Text>
             </TouchableOpacity>
@@ -87,77 +86,79 @@ export const Navbar: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  floatingWrapper: {
-    position: 'absolute',
-    left: 16,
-    right: 16,
-    zIndex: 99
+  navWrapper: {
+    paddingHorizontal: 12,
+    paddingTop: 4,
+    paddingBottom: 6,
+    backgroundColor: COLORS.canvas
   },
   floatingBar: {
     backgroundColor: COLORS.surface,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-around',
-    height: 68,
-    borderRadius: 36,
-    paddingHorizontal: 8,
+    justifyContent: 'space-between',
+    height: 60,
+    borderRadius: 24,
+    paddingHorizontal: 4,
     borderWidth: 1,
-    borderColor: 'rgba(226, 232, 240, 0.8)',
+    borderColor: '#E2E8F0',
     shadowColor: '#0F172A',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.12,
-    shadowRadius: 20,
-    elevation: 12
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
+    elevation: 6
   },
   tabItem: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 4
+    paddingVertical: 2
   },
   iconWrap: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center'
   },
   iconWrapActive: {
-    backgroundColor: '#1E293B' // Reference image style: dark rounded pill for active tab
+    backgroundColor: COLORS.brandNavy // Modern high-contrast dark pill as in reference image
   },
   tabLabel: {
-    fontSize: 9,
+    fontSize: 9.5,
     fontWeight: '600',
     color: COLORS.muted,
-    marginTop: 2
+    marginTop: 2,
+    letterSpacing: -0.2
   },
   tabLabelActive: {
-    color: '#1E293B',
+    color: COLORS.brandNavy,
     fontWeight: '800'
   },
-  actionButton: {
+  actionTab: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: -8
+    paddingVertical: 2
   },
   actionCircle: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     backgroundColor: COLORS.brand,
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: COLORS.brand,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.35,
-    shadowRadius: 8,
-    elevation: 6
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 4
   },
   actionLabel: {
-    fontSize: 9,
+    fontSize: 9.5,
     fontWeight: '800',
     color: COLORS.brand,
-    marginTop: 2
+    marginTop: 2,
+    letterSpacing: -0.2
   }
 });
