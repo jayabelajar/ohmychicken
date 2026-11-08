@@ -1,0 +1,1878 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AyamCare - Sistem Pakar Diagnosis Penyakit Ayam Broiler (Certainty Factor)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            DEFAULT: '#1E56A0', // AyamCare Blue
+                            dark: '#163E75',
+                            light: '#EFF6FF',
+                            accent: '#0284C7',
+                            ring: '#93C5FD'
+                        },
+                        canvas: '#F4F7FB',
+                        surface: '#FFFFFF',
+                        ink: '#0F172A',
+                        muted: '#64748B',
+                        line: '#E2E8F0',
+                        badge: '#DBEAFE'
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #E6EDF5;
+            color: #0F172A;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        @keyframes pulse-subtle {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.85; transform: scale(1.02); }
+        }
+
+        .pulse-live {
+            animation: pulse-subtle 2.5s infinite ease-in-out;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex items-center justify-center p-0 sm:p-4">
+
+    <!-- Mobile Frame Container -->
+    <main
+        class="w-full sm:max-w-[440px] h-[100dvh] sm:h-[880px] sm:max-h-[94vh] bg-canvas sm:rounded-[36px] sm:border sm:border-line sm:shadow-2xl flex flex-col relative overflow-hidden">
+
+        <!-- Toast Notification -->
+        <div id="toast"
+            class="fixed sm:absolute top-5 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 opacity-0 pointer-events-none translate-y-[-10px] w-[90%] max-w-[380px]">
+            <div
+                class="bg-ink text-surface text-xs font-medium py-3 px-4 rounded-2xl shadow-xl flex items-center justify-between gap-3 border border-slate-700/50 backdrop-blur-md">
+                <div class="flex items-center gap-2.5">
+                    <i data-lucide="info" class="w-4 h-4 text-brand-accent shrink-0"></i>
+                    <span id="toast-message">Pemberitahuan</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Viewport Content Area -->
+        <div id="screen-container" class="flex-1 overflow-y-auto hide-scrollbar relative">
+
+            <!-- SCREEN 1: ONBOARDING -->
+            <section id="screen-onboarding" class="p-6 h-full flex flex-col justify-between hidden">
+                <div class="pt-8 space-y-6">
+                    <div class="flex items-center justify-between">
+                        <div class="w-14 h-14 rounded-2xl bg-brand flex items-center justify-center text-surface shadow-lg shadow-brand/20">
+                            <i data-lucide="stethoscope" class="w-7 h-7"></i>
+                        </div>
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-brand bg-brand-light px-3 py-1.5 rounded-full border border-blue-200">
+                            AyamCare v1.0
+                        </span>
+                    </div>
+
+                    <div>
+                        <span class="inline-block text-[11px] font-bold uppercase tracking-wider text-brand-accent bg-sky-50 px-2.5 py-1 rounded-md mb-2">
+                            Metode Certainty Factor
+                        </span>
+                        <h1 class="text-3xl font-extrabold tracking-tight text-ink mb-3 leading-tight">
+                            Deteksi Dini Kesehatan Broiler Anda.
+                        </h1>
+                        <p class="text-xs text-muted leading-relaxed">
+                            Sistem inferensi pakar offline untuk membantu peternak mengidentifikasi 13 penyakit ayam broiler dengan pembobotan matematis Certainty Factor berbasis riset veteriner 2024.
+                        </p>
+                    </div>
+
+                    <div class="space-y-3.5 border-t border-line pt-5">
+                        <div class="flex items-start gap-3 bg-surface p-3.5 rounded-xl border border-line">
+                            <div class="w-8 h-8 rounded-lg bg-blue-50 text-brand flex items-center justify-center shrink-0">
+                                <i data-lucide="wifi-off" class="w-4 h-4"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs font-bold text-ink">100% Beroperasi Offline</p>
+                                <p class="text-[11px] text-muted leading-tight mt-0.5">Bekerja penuh di area perkandangan tanpa perlu sambungan internet atau paket data.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-3 bg-surface p-3.5 rounded-xl border border-line">
+                            <div class="w-8 h-8 rounded-lg bg-blue-50 text-brand flex items-center justify-center shrink-0">
+                                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs font-bold text-ink">Basis Bukti Ilmiah (Jurnal 2024)</p>
+                                <p class="text-[11px] text-muted leading-tight mt-0.5">Mengadopsi aturan pakar dari penelitian Jurnal Algoritma ITG dengan 40 indikator gejala klinis.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-3 bg-surface p-3.5 rounded-xl border border-line">
+                            <div class="w-8 h-8 rounded-lg bg-blue-50 text-brand flex items-center justify-center shrink-0">
+                                <i data-lucide="activity" class="w-4 h-4"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs font-bold text-ink">Kombinasi Keyakinan Fleksibel</p>
+                                <p class="text-[11px] text-muted leading-tight mt-0.5">Menghitung keyakinan peternak dikalikan bobot pakar melalui formula berantai Shortliffe.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pb-4 pt-4">
+                    <button onclick="finishOnboarding()"
+                        class="w-full py-3.5 bg-brand text-surface rounded-2xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-brand-dark transition-all shadow-md shadow-brand/20 active:scale-[0.98]">
+                        <span>Mulai Aplikasi Sekarang</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </button>
+                    <p class="text-[10px] text-center text-muted mt-2.5">Aplikasi penunjang keputusan pendukung peternak</p>
+                </div>
+            </section>
+
+            <!-- SCREEN 2: HOME (BERANDA) -->
+            <section id="screen-home" class="p-5 pb-24 space-y-5 hidden">
+                <!-- Top App Bar -->
+                <header class="flex items-center justify-between pt-1">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-9 h-9 rounded-xl bg-brand text-surface flex items-center justify-center font-extrabold text-sm shadow-sm shadow-brand/20">
+                            AC
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-1.5">
+                                <h1 class="text-base font-extrabold text-ink tracking-tight">AyamCare</h1>
+                                <span class="text-[9px] font-bold text-brand bg-brand-light px-1.5 py-0.5 rounded border border-blue-200">BROILER</span>
+                            </div>
+                            <span class="text-[11px] text-muted block font-normal leading-none mt-0.5">Sistem Pakar Diagnosis</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface border border-line text-[11px] font-semibold text-slate-700 shadow-sm">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                        <span>Offline Siap</span>
+                    </div>
+                </header>
+
+                <!-- Main Action Hero Card -->
+                <div class="bg-gradient-to-br from-brand to-brand-dark rounded-2xl p-5 text-surface space-y-4 shadow-xl shadow-brand/15 relative overflow-hidden">
+                    <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-white/10 rounded-full blur-xl pointer-events-none"></div>
+                    <div class="space-y-1 relative z-10">
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-sky-200 bg-white/15 px-2 py-0.5 rounded-full inline-block">
+                            Inferensi Certainty Factor
+                        </span>
+                        <h2 class="text-lg font-bold text-white">Mulai Diagnosis Gejala Ayam</h2>
+                        <p class="text-xs text-blue-100 leading-relaxed">
+                            Amati tanda fisik, perilaku, feses, atau gangguan pernapasan pada kawanan broiler Anda untuk deteksi dini.
+                        </p>
+                    </div>
+
+                    <button onclick="startDiagnosisFlow()"
+                        class="w-full py-3.5 bg-white text-brand rounded-xl font-bold text-xs flex items-center justify-center gap-2 hover:bg-blue-50 transition-all shadow-md active:scale-[0.98] relative z-10">
+                        <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                        <span>Mulai Konsultasi Baru</span>
+                    </button>
+                </div>
+
+                <!-- Metric Grid -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div onclick="switchTab('penyakit')"
+                        class="bg-surface border border-line p-3.5 rounded-xl cursor-pointer hover:border-brand/50 transition-all shadow-sm active:scale-[0.99]">
+                        <div class="flex items-center justify-between text-muted mb-2">
+                            <span class="text-xs font-semibold text-slate-700">Penyakit Terdaftar</span>
+                            <div class="w-6 h-6 rounded-lg bg-blue-50 text-brand flex items-center justify-center">
+                                <i data-lucide="book-open" class="w-3.5 h-3.5"></i>
+                            </div>
+                        </div>
+                        <p id="home-total-diseases" class="text-2xl font-extrabold text-ink">13</p>
+                        <span class="text-[11px] text-brand font-medium">Lihat katalog & penanganan &rarr;</span>
+                    </div>
+
+                    <div onclick="startDiagnosisFlow()"
+                        class="bg-surface border border-line p-3.5 rounded-xl cursor-pointer hover:border-brand/50 transition-all shadow-sm active:scale-[0.99]">
+                        <div class="flex items-center justify-between text-muted mb-2">
+                            <span class="text-xs font-semibold text-slate-700">Indikator Gejala</span>
+                            <div class="w-6 h-6 rounded-lg bg-blue-50 text-brand flex items-center justify-center">
+                                <i data-lucide="list-checks" class="w-3.5 h-3.5"></i>
+                            </div>
+                        </div>
+                        <p id="home-total-symptoms" class="text-2xl font-extrabold text-ink">40</p>
+                        <span class="text-[11px] text-brand font-medium">5 Kategori observasi &rarr;</span>
+                    </div>
+                </div>
+
+                <!-- Research Test Bench Shortcut Card -->
+                <div class="bg-surface border border-blue-200 rounded-xl p-4 space-y-2.5 shadow-sm">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-brand"></span>
+                            <h3 class="text-xs font-bold text-ink">Uji Validasi 10 Kasus Jurnal</h3>
+                        </div>
+                        <span class="text-[10px] font-mono text-brand bg-brand-light px-2 py-0.5 rounded-md font-semibold">Tabel 6</span>
+                    </div>
+                    <p class="text-[11px] text-muted leading-relaxed">
+                        Coba langsung 10 sampel uji historis dari penelitian primer (Agustin et al., 2024) untuk memverifikasi akurasi CF sistem.
+                    </p>
+                    <button onclick="openResearchTestModal()"
+                        class="w-full py-2 bg-blue-50 hover:bg-blue-100 text-brand rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition-colors border border-blue-200">
+                        <i data-lucide="flask-conical" class="w-3.5 h-3.5"></i>
+                        <span>Buka Panel Uji 10 Sampel</span>
+                    </button>
+                </div>
+
+                <!-- Quick Navigation Grid -->
+                <div class="space-y-2">
+                    <span class="text-[11px] font-bold text-muted uppercase tracking-wider block px-0.5">Akses Cepat</span>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="switchTab('riwayat')"
+                            class="flex items-center gap-2.5 p-3 rounded-xl bg-surface border border-line text-left text-xs font-semibold text-ink hover:border-brand/40 shadow-sm transition-colors">
+                            <i data-lucide="history" class="w-4 h-4 text-brand"></i>
+                            <span>Riwayat Diagnosis</span>
+                        </button>
+                        <button onclick="switchTab('penyakit')"
+                            class="flex items-center gap-2.5 p-3 rounded-xl bg-surface border border-line text-left text-xs font-semibold text-ink hover:border-brand/40 shadow-sm transition-colors">
+                            <i data-lucide="database" class="w-4 h-4 text-brand"></i>
+                            <span>Katalog Penyakit</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Biosecurity Guideline Tip -->
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100 rounded-xl p-3.5 flex gap-3 items-start">
+                    <div class="p-2 rounded-lg bg-brand text-surface shrink-0 mt-0.5 shadow-sm">
+                        <i data-lucide="shield" class="w-4 h-4"></i>
+                    </div>
+                    <div class="space-y-1">
+                        <h4 class="text-xs font-bold text-ink">Protokol Biosekuriti Broiler</h4>
+                        <p class="text-[11px] text-slate-600 leading-relaxed">
+                            Lakukan pencelupan alas kaki (dipping) larutan desinfektan di depan pintu kandang dan ganti sekam lembap untuk mencegah penularan Koksidiosis dan CRD.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SCREEN 3: DIAGNOSIS (SELEKSI GEJALA) -->
+            <section id="screen-diagnosis" class="p-5 pb-28 space-y-4 hidden">
+                <!-- Flow Header -->
+                <div class="flex items-center justify-between">
+                    <button onclick="cancelDiagnosis()" class="text-muted hover:text-ink p-1 -ml-1 flex items-center gap-1 text-xs font-semibold">
+                        <i data-lucide="chevron-left" class="w-5 h-5"></i>
+                        <span>Batal</span>
+                    </button>
+                    <div class="text-center">
+                        <span class="text-[10px] font-bold text-brand uppercase tracking-wider">Langkah 1 dari 2</span>
+                        <h2 class="text-xs font-bold text-ink">Pemilihan Gejala Klinis</h2>
+                    </div>
+                    <button onclick="clearAllSelectedSymptoms()" class="text-[11px] font-medium text-muted hover:text-red-600">
+                        Reset
+                    </button>
+                </div>
+
+                <!-- Step Indicator -->
+                <div class="w-full bg-line h-1.5 rounded-full overflow-hidden">
+                    <div class="bg-brand h-full w-1/2 rounded-full transition-all duration-300"></div>
+                </div>
+
+                <div>
+                    <h2 class="text-base font-extrabold text-ink">Amati kondisi ayam di kandang</h2>
+                    <p class="text-xs text-muted mt-0.5">Centang semua gejala yang tampak pada kawanan broiler Anda.</p>
+                </div>
+
+                <!-- Search / Filter Symptom Input -->
+                <div class="relative">
+                    <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-muted"></i>
+                    <input type="text" id="symptom-search" oninput="filterSymptoms()"
+                        placeholder="Cari gejala (contoh: ngorok, feses, napas)..."
+                        class="w-full pl-10 pr-4 py-2.5 text-xs bg-surface border border-line rounded-xl text-ink placeholder-muted focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand-ring/30 transition-all shadow-sm">
+                </div>
+
+                <!-- Category Filter Pills -->
+                <div id="category-pills" class="flex gap-1.5 overflow-x-auto hide-scrollbar pb-1">
+                    <!-- Populated by JS -->
+                </div>
+
+                <!-- Symptoms Checklist grouped by category -->
+                <div id="symptoms-list-container" class="space-y-4 pt-1">
+                    <!-- Populated by JS -->
+                </div>
+
+                <!-- Bottom Sticky Action Bar -->
+                <div
+                    class="fixed sm:absolute bottom-0 left-0 right-0 p-4 bg-surface/95 backdrop-blur-md border-t border-line flex items-center justify-between gap-3 z-30 shadow-lg">
+                    <div>
+                        <span id="selected-symptoms-count" class="text-xs font-bold text-brand block">0 gejala dipilih</span>
+                        <span class="text-[10px] text-muted">Minimal 2 gejala untuk inferensi</span>
+                    </div>
+                    <button id="btn-to-confidence" onclick="goToConfidenceScreen()" disabled
+                        class="px-5 py-2.5 bg-brand disabled:bg-slate-200 disabled:text-slate-400 text-surface rounded-xl font-bold text-xs flex items-center gap-1.5 transition-all shadow-sm shadow-brand/20 active:scale-95">
+                        <span>Lanjutkan</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </section>
+
+            <!-- SCREEN 4: CONFIDENCE LEVEL (CF USER) -->
+            <section id="screen-confidence" class="p-5 pb-28 space-y-4 hidden">
+                <!-- Flow Header -->
+                <div class="flex items-center justify-between">
+                    <button onclick="showScreen('diagnosis')" class="text-muted hover:text-ink p-1 -ml-1 flex items-center gap-1 text-xs font-semibold">
+                        <i data-lucide="chevron-left" class="w-5 h-5"></i>
+                        <span>Kembali</span>
+                    </button>
+                    <div class="text-center">
+                        <span class="text-[10px] font-bold text-brand uppercase tracking-wider">Langkah 2 dari 2</span>
+                        <h2 class="text-xs font-bold text-ink">Skala Keyakinan Peternak</h2>
+                    </div>
+                    <div class="w-6"></div>
+                </div>
+
+                <!-- Step Indicator -->
+                <div class="w-full bg-line h-1.5 rounded-full overflow-hidden">
+                    <div class="bg-brand h-full w-full rounded-full transition-all duration-300"></div>
+                </div>
+
+                <div>
+                    <h2 class="text-base font-extrabold text-ink">Seberapa yakin observasi Anda?</h2>
+                    <p class="text-xs text-muted mt-0.5">Pilih tingkat kepastian Anda untuk setiap gejala yang dicentang.</p>
+                </div>
+
+                <!-- Selected Symptoms with CF User Selector -->
+                <div id="confidence-inputs-container" class="space-y-3 pt-1">
+                    <!-- Populated by JS -->
+                </div>
+
+                <!-- Bottom Sticky Action Bar -->
+                <div
+                    class="fixed sm:absolute bottom-0 left-0 right-0 p-4 bg-surface/95 backdrop-blur-md border-t border-line flex items-center justify-between gap-3 z-30 shadow-lg">
+                    <button onclick="showScreen('diagnosis')"
+                        class="px-4 py-2.5 border border-line text-ink rounded-xl font-semibold text-xs hover:bg-slate-50 transition-colors">
+                        Ubah Gejala
+                    </button>
+                    <button onclick="calculateDiagnosis()"
+                        class="flex-1 py-2.5 bg-brand text-surface rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 hover:bg-brand-dark transition-all shadow-md shadow-brand/20 active:scale-95">
+                        <i data-lucide="calculator" class="w-4 h-4"></i>
+                        <span>Hitung Diagnosis CF</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- SCREEN 5: DIAGNOSIS RESULT -->
+            <section id="screen-result" class="p-5 pb-24 space-y-4 hidden">
+                <!-- Result Header -->
+                <div class="flex items-center justify-between">
+                    <button onclick="switchTab('beranda')" class="text-muted hover:text-ink p-1 -ml-1">
+                        <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                    </button>
+                    <h2 class="text-xs font-bold text-ink uppercase tracking-wider">Hasil Diagnosis AyamCare</h2>
+                    <button onclick="shareDiagnosisSummary()" class="text-brand hover:text-brand-dark p-1">
+                        <i data-lucide="share-2" class="w-4 h-4"></i>
+                    </button>
+                </div>
+
+                <!-- Primary Match Card -->
+                <div class="bg-surface border-2 border-brand/30 rounded-2xl p-5 space-y-4 shadow-md">
+                    <div class="flex justify-between items-start gap-2">
+                        <div>
+                            <span class="inline-flex items-center gap-1 text-[10px] font-bold text-brand uppercase tracking-wider bg-brand-light px-2.5 py-0.5 rounded-full border border-blue-200">
+                                <i data-lucide="check-circle" class="w-3 h-3 text-brand"></i>
+                                Indikasi Paling Kuat
+                            </span>
+                            <h2 id="result-primary-name" class="text-xl font-extrabold text-ink mt-1.5">-</h2>
+                            <p id="result-primary-latin" class="text-xs text-muted italic">-</p>
+                        </div>
+                        <div class="text-right shrink-0">
+                            <span id="result-primary-percentage" class="text-3xl font-black text-brand block">0%</span>
+                            <span class="text-[10px] text-muted font-medium">Certainty Factor</span>
+                        </div>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                        <div id="result-primary-bar" class="bg-gradient-to-r from-brand to-brand-accent h-full transition-all duration-700 rounded-full"
+                            style="width: 0%"></div>
+                    </div>
+
+                    <div class="pt-2 border-t border-line flex items-center justify-between text-xs text-muted">
+                        <span class="flex items-center gap-1">
+                            <i data-lucide="cpu" class="w-3.5 h-3.5 text-brand"></i>
+                            Shortliffe & Buchanan Rule
+                        </span>
+                        <span id="result-matched-count" class="font-bold text-ink">0 gejala cocok</span>
+                    </div>
+                </div>
+
+                <!-- Calculation Explanation Accordion -->
+                <div class="bg-surface border border-line rounded-xl p-4 space-y-2">
+                    <button onclick="toggleCalcDetails()" class="w-full flex items-center justify-between text-left">
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="calculator" class="w-4 h-4 text-brand"></i>
+                            <span class="text-xs font-bold text-ink">Rincian Perhitungan Matematis</span>
+                        </div>
+                        <i id="calc-chevron" data-lucide="chevron-down" class="w-4 h-4 text-muted transition-transform"></i>
+                    </button>
+                    <div id="calc-details-content" class="hidden text-xs text-muted space-y-2 pt-2 border-t border-line">
+                        <p class="text-[11px] leading-relaxed">
+                            Formulasi kombinasi sekuensial: <code class="bg-slate-100 text-ink px-1 py-0.5 rounded font-mono text-[10px]">CF_comb = CF1 + CF2 * (1 - CF1)</code>
+                        </p>
+                        <div id="calc-steps-list" class="space-y-1 font-mono text-[10px] bg-slate-50 p-2.5 rounded-lg border border-line">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Differential Diagnosis (Kemungkinan Lainnya) -->
+                <div id="result-differentials-box" class="space-y-2">
+                    <span class="text-xs font-bold text-muted uppercase tracking-wider block px-1">
+                        Diferensial Diagnosis (Alternatif Lain)
+                    </span>
+                    <div id="result-differentials-list" class="space-y-2">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Matched Symptoms Details -->
+                <div class="bg-surface border border-line rounded-xl p-4 space-y-3">
+                    <h3 class="text-xs font-bold text-ink flex items-center gap-1.5">
+                        <i data-lucide="check-circle-2" class="w-4 h-4 text-brand"></i>
+                        <span>Gejala Teridentifikasi pada Penyakit Ini</span>
+                    </h3>
+                    <ul id="result-symptoms-list" class="space-y-2 text-xs text-muted">
+                        <!-- Populated by JS -->
+                    </ul>
+                </div>
+
+                <!-- Treatment & Prevention Recommendations -->
+                <div class="bg-surface border border-line rounded-xl p-4 space-y-2.5">
+                    <h3 class="text-xs font-bold text-ink flex items-center gap-1.5">
+                        <i data-lucide="clipboard-list" class="w-4 h-4 text-brand"></i>
+                        <span>Protokol Tindakan & Penanganan Cepat</span>
+                    </h3>
+                    <ul id="result-recommendations-list" class="space-y-2 text-xs text-muted list-disc list-inside leading-relaxed">
+                        <!-- Populated by JS -->
+                    </ul>
+                </div>
+
+                <!-- Medical Disclaimer -->
+                <div
+                    class="bg-amber-50 border border-amber-200 rounded-xl p-3.5 text-[11px] text-amber-800 flex gap-2.5 items-start">
+                    <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-600 shrink-0 mt-0.5"></i>
+                    <p class="leading-relaxed">
+                        <strong>Perhatian Klinis:</strong> Hasil diagnosis AyamCare berbasis inferensi komputer Certainty Factor. Untuk konfirmasi pasti dan pemberian antibiotik keras berjadwal, selalu konsultasikan dengan dokter hewan atau dinas peternakan setempat.
+                    </p>
+                </div>
+
+                <!-- Bottom Actions -->
+                <div class="pt-2 space-y-2">
+                    <button onclick="startDiagnosisFlow()"
+                        class="w-full py-3 bg-brand text-surface rounded-xl font-bold text-xs flex items-center justify-center gap-2 hover:bg-brand-dark transition-all shadow-md shadow-brand/20 active:scale-95">
+                        <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                        <span>Ulangi Sesi Diagnosis Baru</span>
+                    </button>
+                    <button onclick="switchTab('beranda')"
+                        class="w-full py-2.5 border border-line text-ink rounded-xl font-semibold text-xs hover:bg-slate-50 transition-colors">
+                        Kembali ke Beranda
+                    </button>
+                </div>
+            </section>
+
+            <!-- SCREEN 6: DISEASE CATALOG -->
+            <section id="screen-catalog" class="p-5 pb-24 space-y-4 hidden">
+                <header class="pt-1">
+                    <h2 class="text-lg font-extrabold text-ink">Katalog Penyakit Broiler</h2>
+                    <p class="text-xs text-muted">Basis pengetahuan 13 penyakit broiler dari Jurnal Algoritma 2024.</p>
+                </header>
+
+                <!-- Search Input -->
+                <div class="relative">
+                    <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-muted"></i>
+                    <input type="text" id="catalog-search" oninput="filterCatalog()"
+                        placeholder="Cari nama penyakit, kode (P01), atau gejala..."
+                        class="w-full pl-10 pr-4 py-2.5 text-xs bg-surface border border-line rounded-xl text-ink placeholder-muted focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand-ring/30 transition-all shadow-sm">
+                </div>
+
+                <!-- Disease List -->
+                <div id="catalog-list" class="space-y-2.5">
+                    <!-- Populated by JS -->
+                </div>
+            </section>
+
+            <!-- SCREEN 7: HISTORY -->
+            <section id="screen-history" class="p-5 pb-24 space-y-4 hidden">
+                <div class="flex items-center justify-between pt-1">
+                    <div>
+                        <h2 class="text-lg font-extrabold text-ink">Riwayat Diagnosis</h2>
+                        <p class="text-xs text-muted">Catatan konsultasi tersimpan offline di perangkat.</p>
+                    </div>
+                    <button onclick="clearHistory()" class="text-xs text-muted hover:text-red-600 p-1 flex items-center gap-1 font-semibold">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        <span>Hapus</span>
+                    </button>
+                </div>
+
+                <div id="history-list" class="space-y-2.5">
+                    <!-- Populated by JS -->
+                </div>
+            </section>
+
+            <!-- SCREEN 8: SETTINGS & ABOUT -->
+            <section id="screen-settings" class="p-5 pb-24 space-y-5 hidden">
+                <header class="pt-1">
+                    <h2 class="text-lg font-extrabold text-ink">Pengaturan & Informasi</h2>
+                    <p class="text-xs text-muted">Spesifikasi sistem inferensi & basis data AyamCare.</p>
+                </header>
+
+                <!-- App Details Card -->
+                <div class="bg-surface border border-line rounded-2xl p-4 space-y-3 shadow-sm">
+                    <div class="flex items-center gap-3">
+                        <div
+                            class="w-11 h-11 rounded-xl bg-brand text-surface flex items-center justify-center font-extrabold text-base shadow-sm shadow-brand/20">
+                            AC
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-extrabold text-ink">AyamCare Broiler Mobile</h3>
+                            <p class="text-[11px] text-muted">v1.0.0 — Offline-First Architecture</p>
+                        </div>
+                    </div>
+                    <div class="border-t border-line pt-3 space-y-2 text-xs">
+                        <div class="flex justify-between text-muted">
+                            <span>Metode Inferensi</span>
+                            <span class="font-bold text-ink">Certainty Factor (Shortliffe)</span>
+                        </div>
+                        <div class="flex justify-between text-muted">
+                            <span>Basis Pengetahuan</span>
+                            <span class="font-bold text-ink">KB-AGUSTIN-2024 (13 Penyakit)</span>
+                        </div>
+                        <div class="flex justify-between text-muted">
+                            <span>Indikator Gejala</span>
+                            <span class="font-bold text-ink">40 Kode Gejala (G01–G40)</span>
+                        </div>
+                        <div class="flex justify-between text-muted">
+                            <span>Penyimpanan Data</span>
+                            <span class="font-bold text-ink">SQLite / Offline LocalStorage</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scientific Reference Card -->
+                <div class="space-y-2">
+                    <span class="text-xs font-bold text-muted uppercase tracking-wider block px-1">Sumber Penelitian Primer</span>
+                    <div
+                        class="bg-surface border border-line rounded-xl p-4 space-y-2 text-xs text-muted leading-relaxed shadow-sm">
+                        <p class="font-bold text-ink">Agustin, Mulyani & Sopandi (2024)</p>
+                        <p class="text-[11px]">
+                            <em>"Implementasi Metode Certainty Faktor Pada Sistem Diagnosa Penyakit Ayam Pedaging (Broiler)"</em>, Jurnal Algoritma ITG Vol. 21 No. 2, Hal. 332-342.
+                        </p>
+                        <div class="pt-1">
+                            <a href="https://doi.org/10.33364/algoritma/v.21-2.1526" target="_blank"
+                                class="inline-flex items-center gap-1.5 text-brand font-semibold text-[11px] hover:underline">
+                                <span>Buka DOI Jurnal</span>
+                                <i data-lucide="external-link" class="w-3 h-3"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Data Management Card -->
+                <div class="space-y-2">
+                    <span class="text-xs font-bold text-muted uppercase tracking-wider block px-1">Manajemen Data</span>
+                    <div class="bg-surface border border-line rounded-xl p-4 space-y-3 shadow-sm">
+                        <button onclick="resetAppToDefault()"
+                            class="w-full py-2.5 px-3 border border-red-200 text-red-600 rounded-xl text-xs font-bold flex items-center justify-center gap-2 hover:bg-red-50 transition-colors">
+                            <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                            <span>Reset Data & Muat Ulang Onboarding</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Disclaimer Card -->
+                <div class="bg-slate-50 border border-line rounded-xl p-4 space-y-1 text-xs text-muted">
+                    <span class="font-bold text-ink flex items-center gap-1.5">
+                        <i data-lucide="shield-alert" class="w-4 h-4 text-brand"></i>
+                        <span>Pernyataan Keamanan Veteriner</span>
+                    </span>
+                    <p class="text-[11px] leading-relaxed pt-1">
+                        Aplikasi ini tidak menggantikan nekropsi bedah bangkai atau pengujian kultur laboratorium di instalasi patologi hewan. Gunakan rekomendasi sebagai tindakan awal pendukung.
+                    </p>
+                </div>
+            </section>
+
+        </div>
+
+        <!-- MODAL: DETAIL PENYAKIT LENGKAP -->
+        <div id="disease-modal"
+            class="fixed sm:absolute inset-0 bg-ink/50 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 opacity-0 pointer-events-none transition-opacity duration-200">
+            <div id="disease-modal-content"
+                class="bg-surface w-full sm:rounded-3xl max-h-[85vh] flex flex-col rounded-t-3xl border border-line shadow-2xl translate-y-8 transition-transform duration-200">
+                <div class="p-4 border-b border-line flex items-center justify-between">
+                    <div class="pr-2">
+                        <div class="flex items-center gap-2">
+                            <span id="modal-disease-code"
+                                class="text-[10px] font-mono font-bold text-brand bg-brand-light px-2 py-0.5 rounded border border-blue-200">P01</span>
+                            <span id="modal-disease-risk" class="text-[10px] font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded">Tinggi</span>
+                        </div>
+                        <h2 id="modal-disease-name" class="text-base font-extrabold text-ink mt-1">Nama Penyakit</h2>
+                        <p id="modal-disease-latin" class="text-xs text-muted italic">Nama Ilmiah</p>
+                    </div>
+                    <button onclick="closeDiseaseModal()"
+                        class="w-8 h-8 rounded-full bg-slate-100 text-muted hover:text-ink flex items-center justify-center">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                </div>
+                <div class="p-5 overflow-y-auto space-y-4 text-xs hide-scrollbar">
+                    <div>
+                        <h3 class="font-bold text-ink mb-1 flex items-center gap-1.5">
+                            <i data-lucide="file-text" class="w-3.5 h-3.5 text-brand"></i>
+                            <span>Deskripsi & Etiologi Patogen</span>
+                        </h3>
+                        <p id="modal-disease-desc" class="text-muted leading-relaxed"></p>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-ink mb-1 flex items-center gap-1.5">
+                            <i data-lucide="list" class="w-3.5 h-3.5 text-brand"></i>
+                            <span>Gejala Karakteristik (Tabel Jurnal)</span>
+                        </h3>
+                        <ul id="modal-disease-symptoms" class="list-disc list-inside text-muted space-y-1"></ul>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-ink mb-1 flex items-center gap-1.5">
+                            <i data-lucide="shield" class="w-3.5 h-3.5 text-brand"></i>
+                            <span>Tindakan Pencegahan Biosekuriti</span>
+                        </h3>
+                        <p id="modal-disease-prevention" class="text-muted leading-relaxed"></p>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-ink mb-1 flex items-center gap-1.5">
+                            <i data-lucide="heart-pulse" class="w-3.5 h-3.5 text-brand"></i>
+                            <span>Penanganan Medis Awal</span>
+                        </h3>
+                        <p id="modal-disease-treatment" class="text-muted leading-relaxed"></p>
+                    </div>
+                </div>
+                <div class="p-4 border-t border-line bg-canvas">
+                    <button onclick="closeDiseaseModal()"
+                        class="w-full py-2.5 bg-brand text-surface rounded-xl font-bold text-xs hover:bg-brand-dark transition-colors">
+                        Tutup Informasi
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL: UJI 10 SAMPEL JURNAL (RESEARCH BENCH) -->
+        <div id="test-bench-modal"
+            class="fixed sm:absolute inset-0 bg-ink/50 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 opacity-0 pointer-events-none transition-opacity duration-200">
+            <div id="test-bench-modal-content"
+                class="bg-surface w-full sm:rounded-3xl max-h-[85vh] flex flex-col rounded-t-3xl border border-line shadow-2xl translate-y-8 transition-transform duration-200">
+                <div class="p-4 border-b border-line flex items-center justify-between">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="flask-conical" class="w-4 h-4 text-brand"></i>
+                            <h2 class="text-sm font-extrabold text-ink">Validasi 10 Sampel Jurnal</h2>
+                        </div>
+                        <p class="text-[11px] text-muted">Pilih sampel uji Tabel 6 untuk simulasi otomatis</p>
+                    </div>
+                    <button onclick="closeResearchTestModal()"
+                        class="w-8 h-8 rounded-full bg-slate-100 text-muted hover:text-ink flex items-center justify-center">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                </div>
+                <div id="test-samples-list" class="p-4 overflow-y-auto space-y-2 text-xs hide-scrollbar flex-1">
+                    <!-- Populated by JS -->
+                </div>
+                <div class="p-3 border-t border-line bg-canvas text-center">
+                    <span class="text-[10px] text-muted">Data primer: Agustin et al. (2024) Tabel 6 Jurnal Algoritma</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- FIXED BOTTOM NAVIGATION BAR -->
+        <nav id="bottom-navigation"
+            class="bg-surface border-t border-line h-16 px-4 flex items-center justify-around z-40 shrink-0 shadow-lg">
+            <button onclick="switchTab('beranda')" id="tab-beranda"
+                class="nav-item flex flex-col items-center gap-1 text-brand transition-colors">
+                <i data-lucide="home" class="w-5 h-5"></i>
+                <span class="text-[10px] font-bold">Beranda</span>
+            </button>
+            <button onclick="switchTab('penyakit')" id="tab-penyakit"
+                class="nav-item flex flex-col items-center gap-1 text-muted transition-colors">
+                <i data-lucide="book-open" class="w-5 h-5"></i>
+                <span class="text-[10px] font-semibold">Penyakit</span>
+            </button>
+            <button onclick="switchTab('riwayat')" id="tab-riwayat"
+                class="nav-item flex flex-col items-center gap-1 text-muted transition-colors">
+                <i data-lucide="history" class="w-5 h-5"></i>
+                <span class="text-[10px] font-semibold">Riwayat</span>
+            </button>
+            <button onclick="switchTab('pengaturan')" id="tab-pengaturan"
+                class="nav-item flex flex-col items-center gap-1 text-muted transition-colors">
+                <i data-lucide="settings" class="w-5 h-5"></i>
+                <span class="text-[10px] font-semibold">Pengaturan</span>
+            </button>
+        </nav>
+
+    </main>
+
+    <!-- EXPERT SYSTEM INFERENCE ENGINE & DATASET -->
+    <script>
+        /* =========================================================================
+           1. KNOWLEDGE BASE DATASET (SOURCE: DOCS/ CSV & JURNAL ALGORITMA 2024)
+           ========================================================================= */
+        const DISEASES = [
+            {
+                id: 'P01',
+                code: 'P01',
+                name: 'Berak Kapur (Pullorum)',
+                latin: 'Salmonella pullorum',
+                risk: 'Tinggi',
+                description: 'Penyakit bakterial menular pada ayam broiler terutama anak ayam (DOC). Menyebabkan peradangan usus akut dengan feses putih berkapur yang menempel di sekitar kloaka.',
+                causes: 'Bakteri Salmonella pullorum non-motil, menular vertikal dari induk atau horizontal via pakan/air tercemar.',
+                prevention: 'Pastikan DOC berasal dari pembibit bebas Salmonella, sanitasi brooder dengan desinfektan aldehid, dan jaga suhu kandang tetap hangat.',
+                treatment: 'Pemberian antibiotik sulfonamida (seperti sulfadiazine-trimethoprim) atau amoksisilin melalui air minum selama 5 hari berturut-turut.',
+                rules: [
+                    { symptomId: 'G01', cfExpert: 0.6 }, // Nafsu makan berkurang
+                    { symptomId: 'G18', cfExpert: 0.9 }, // Mencret putih seperti kapur
+                    { symptomId: 'G24', cfExpert: 0.7 }, // Sayap menggantung
+                    { symptomId: 'G14', cfExpert: 0.75 },// Peradangan dubur / feses menempel di anus
+                    { symptomId: 'G02', cfExpert: 0.5 }  // Nafas sesak
+                ]
+            },
+            {
+                id: 'P02',
+                code: 'P02',
+                name: 'Kolera Ayam (Fowl Cholera)',
+                latin: 'Pasteurella multocida',
+                risk: 'Sangat Tinggi',
+                description: 'Penyakit infeksi bakterial sistemik akut yang menyebabkan septikemia dengan mortalitas tinggi. Gejala khas meliputi sesak napas dan pembengkakan pial/sinus.',
+                causes: 'Bakteri Pasteurella multocida yang berkembang biak saat ayam mengalami stres cuaca ekstrem atau kepadatan tinggi.',
+                prevention: 'Biosekuriti ketat, pencegahan akses burung liar dan hewan pengerat ke kandang, serta vaksinasi bakterin kolera.',
+                treatment: 'Injeksi antibiotik berspektrum luas (oxytetracycline) pada ayam sakit dan medikasi chlortetracycline via air minum untuk kawanan.',
+                rules: [
+                    { symptomId: 'G01', cfExpert: 0.6 }, // Nafsu makan berkurang
+                    { symptomId: 'G02', cfExpert: 0.8 }, // Nafas sesak
+                    { symptomId: 'G21', cfExpert: 0.75 },// Sinus pada mata
+                    { symptomId: 'G28', cfExpert: 0.85 },// Pembengkakan pial
+                    { symptomId: 'G29', cfExpert: 0.8 }  // Pembengkakan fasial & sekitar mata
+                ]
+            },
+            {
+                id: 'P03',
+                code: 'P03',
+                name: 'Flu Burung (Avian Influenza)',
+                latin: 'Highly Pathogenic Avian Influenza (H5N1)',
+                risk: 'Kritis (Zoonosis)',
+                description: 'Penyakit viral akut zoonosis berbahaya yang menyerang sistem saraf, respirasi, dan kardiovaskular dengan angka kematian mendadak mencapai 100%.',
+                causes: 'Virus Influenza tipe A subtipe H5/H7 famili Orthomyxoviridae.',
+                prevention: 'Vaksinasi AI berkala, pagar biosekuriti 3 zona (bersih, kotor, penyangga), dan larangan tegas memasukkan unggas liar.',
+                treatment: 'TIDAK BOLEH DIOBATI. Wajib lapor ke Dinas Peternakan / Pusat Kesehatan Hewan segera untuk isolasi dan stamping-out bersyarat.',
+                rules: [
+                    { symptomId: 'G10', cfExpert: 0.85 },// Kepala bengkak
+                    { symptomId: 'G22', cfExpert: 0.95 },// Mati mendadak
+                    { symptomId: 'G40', cfExpert: 0.85 },// Jengger/pial nampak membiru (sianosis)
+                    { symptomId: 'G02', cfExpert: 0.7 }, // Nafas sesak
+                    { symptomId: 'G15', cfExpert: 0.65 } // Kejang-kejang
+                ]
+            },
+            {
+                id: 'P04',
+                code: 'P04',
+                name: 'Tetelo (Newcastle Disease / ND)',
+                latin: 'Avian Paramyxovirus type 1 (APMV-1)',
+                risk: 'Kritis',
+                description: 'Penyakit virus ganas yang menyebabkan gangguan syaraf pusat (kepala terputar/tortikolis), pernapasan berbunyi, diare kehijauan, dan kelumpuhan kaki/sayap.',
+                causes: 'Virus Paramyxovirus tipe 1 galur velogenik viseral maupun neurotropik.',
+                prevention: 'Vaksinasi terprogram: ND Hitchner B1 tetes mata umur 4 hari, disusul ND LaSota via air minum umur 18-21 hari.',
+                treatment: 'Tidak ada obat antivirus spesifik. Pisahkan ayam yang terinfeksi, berikan terapi suportif multivitamin dosis tinggi dan immunostimulan.',
+                rules: [
+                    { symptomId: 'G01', cfExpert: 0.2 }, // Nafsu makan berkurang (Bobot primer hlm 340)
+                    { symptomId: 'G17', cfExpert: 0.6 }, // Lumpuh kaki/sayap (Bobot primer hlm 340)
+                    { symptomId: 'G11', cfExpert: 0.4 }, // Kepala berputar / tortikolis (Bobot primer hlm 340)
+                    { symptomId: 'G07', cfExpert: 0.7 }, // Keluar cairan dari hidung
+                    { symptomId: 'G02', cfExpert: 0.75 },// Nafas sesak
+                    { symptomId: 'G32', cfExpert: 0.6 }  // Kelihatan mengantuk / lesu
+                ]
+            },
+            {
+                id: 'P05',
+                code: 'P05',
+                name: 'Tipus Ayam (Fowl Typhoid)',
+                latin: 'Salmonella gallinarum',
+                risk: 'Tinggi',
+                description: 'Infeksi bakteri septikemik yang ditandai kotoran kuning kehijauan, anemia (jengger pucat), bulu kusam, dan pembesaran perut akibat hepatomegali.',
+                causes: 'Bakteri Salmonella gallinarum yang menginfeksi saluran empedu dan hati.',
+                prevention: 'Klorinasi tandon air minum peternakan, rotasi desinfektan alas kandang, dan isolasi kandang dari lalat/kutu.',
+                treatment: 'Pemberian antibiotik enrofloxacin atau florfenicol sesuai dosis tertera dokter hewan selama 5 hari berturut.',
+                rules: [
+                    { symptomId: 'G01', cfExpert: 0.6 }, // Nafsu makan berkurang
+                    { symptomId: 'G27', cfExpert: 0.75 },// Jengger pucat
+                    { symptomId: 'G06', cfExpert: 0.65 },// Bulu kusam
+                    { symptomId: 'G16', cfExpert: 0.8 }, // Kotoran kuning kehijauan
+                    { symptomId: 'G39', cfExpert: 0.85 } // Perut membesar (asites)
+                ]
+            },
+            {
+                id: 'P06',
+                code: 'P06',
+                name: 'Berak Darah (Koksidiosis)',
+                latin: 'Eimeria tenella / Eimeria necatrix',
+                risk: 'Sedang - Tinggi',
+                description: 'Penyakit parasit protozoa yang merusak sel epitel usus halus dan sekum ayam broiler akibat kondisi sekam (litter) basah dan berbau amonia.',
+                causes: 'Ookista parasit protozoa Eimeria yang tertelan dari sekam atau air minum yang tercemar.',
+                prevention: 'Jaga kelembapan litter di bawah 25%, balik sekam secara teratur, cegah nipple air minum bocor, dan gunakan antikoksidia feed additive.',
+                treatment: 'Pengobatan dengan Toltrazuril 2.5% atau Sulfaquinoxaline melalui air minum selama 2-3 hari berturut.',
+                rules: [
+                    { symptomId: 'G38', cfExpert: 0.95 },// Kotoran berdarah
+                    { symptomId: 'G14', cfExpert: 0.7 }, // Kotoran putih/menempel di sekitar anus
+                    { symptomId: 'G06', cfExpert: 0.6 }, // Bulu kusam
+                    { symptomId: 'G27', cfExpert: 0.7 }, // Jengger pucat
+                    { symptomId: 'G01', cfExpert: 0.55 } // Nafsu makan berkurang
+                ]
+            },
+            {
+                id: 'P07',
+                code: 'P07',
+                name: 'Gumboro (Infectious Bursal Disease)',
+                latin: 'Infectious Bursal Disease Virus (IBDV)',
+                risk: 'Tinggi',
+                description: 'Penyakit viral akut yang menyerang bursa fabricius ayam muda umur 3-6 minggu. Menyebabkan imunosupresi parah, diare putih, dan ayam mematuk kloaka.',
+                causes: 'Birnavirus sangat stabil terhadap lingkungan dan bahan kimia desinfektan umum.',
+                prevention: 'Vaksinasi Gumboro strain intermediate/intermediate plus pada umur 10-14 hari sesuai titer antibodi maternal.',
+                treatment: 'Terapi suportif: larutan gula merah 2-3% ditambah vitamin ginjal dan elektrolit untuk menekan kematian akibat gagal ginjal.',
+                rules: [
+                    { symptomId: 'G01', cfExpert: 0.6 }, // Nafsu makan berkurang
+                    { symptomId: 'G14', cfExpert: 0.85 },// Peradangan dubur
+                    { symptomId: 'G18', cfExpert: 0.8 }, // Mencret keputihan
+                    { symptomId: 'G19', cfExpert: 0.75 },// Paruh ditaruh di dasar lantai
+                    { symptomId: 'G33', cfExpert: 0.85 } // Mematuk daerah kloaka
+                ]
+            },
+            {
+                id: 'P08',
+                code: 'P08',
+                name: 'Salesma Ayam (Coryza)',
+                latin: 'Avibacterium paragallinarum',
+                risk: 'Sedang',
+                description: 'Penyakit pernapasan akut yang ditandai keluarnya lendir kental berbau busuk dari mata dan hidung, pembengkakan sinus muka, dan mata berbusa.',
+                causes: 'Bakteri Avibacterium paragallinarum yang menyebar cepat melalui droplet udara kandang.',
+                prevention: 'Pengaturan ventilasi udara kandang yang baik, sistem all-in all-out, dan istirahat kandang minimal 14 hari.',
+                treatment: 'Antibiotik eritromisin, spiramisin, atau kombinasi sulfametoksazol-trimetoprim via air minum.',
+                rules: [
+                    { symptomId: 'G07', cfExpert: 0.85 },// Keluar cairan dari hidung/mata
+                    { symptomId: 'G16', cfExpert: 0.7 }, // Kotoran kuning kehijauan
+                    { symptomId: 'G31', cfExpert: 0.65 },// Batuk berdarah / bercak darah
+                    { symptomId: 'G06', cfExpert: 0.6 }, // Bulu kusam
+                    { symptomId: 'G29', cfExpert: 0.8 }  // Pembengkakan fasial & sekitar mata
+                ]
+            },
+            {
+                id: 'P09',
+                code: 'P09',
+                name: 'Batuk Ayam Menahun (Infectious Bronchitis)',
+                latin: 'Avian Infectious Bronchitis Virus (IBV)',
+                risk: 'Sedang - Tinggi',
+                description: 'Penyakit pernapasan menular yang menyerang trakea dan saluran bronkus ayam broiler, menyebabkan batuk, ngorok, dan kerusakan ginjal.',
+                causes: 'Gammacoronavirus avian yang sangat menular melalui aerosol udara pernapasan.',
+                prevention: 'Vaksinasi kombinasi ND-IB aktif pada umur dini di hatchery atau umur 4 hari di kandang.',
+                treatment: 'Tidak ada obat kuratif untuk virus. Berikan ekspektoran bromhexine dan vitamin ADE untuk memulihkan silia epitel pernapasan.',
+                rules: [
+                    { symptomId: 'G03', cfExpert: 0.85 },// Nafas ngorok basah
+                    { symptomId: 'G05', cfExpert: 0.8 }, // Batuk
+                    { symptomId: 'G04', cfExpert: 0.7 }, // Bersin-bersin
+                    { symptomId: 'G02', cfExpert: 0.75 },// Nafas sesak
+                    { symptomId: 'G01', cfExpert: 0.5 }  // Nafsu makan berkurang
+                ]
+            },
+            {
+                id: 'P10',
+                code: 'P10',
+                name: 'Busung Ayam (Lymphoid Leukosis)',
+                latin: 'Avian Leukosis Virus (ALV)',
+                risk: 'Sedang',
+                description: 'Penyakit neoplastik kronis yang menyebabkan timbulnya tumor pada organ dalam dan penimbunan cairan di rongga perut (asites / busung).',
+                causes: 'Retrovirus onkogenik yang ditularkan secara vertikal dari induk ayam pembibit.',
+                prevention: 'Seleksi bibit DOC dari strain bebas leukosis, culling selektif ayam yang menunjukkan pembesaran abdomen.',
+                treatment: 'Tidak ada pengobatan efektif. Lakukan afkir dini pada unggas yang sakit agar tidak menghabiskan pakan.',
+                rules: [
+                    { symptomId: 'G18', cfExpert: 0.7 }, // Mencret keputihan
+                    { symptomId: 'G19', cfExpert: 0.65 },// Paruh ditaruh dasar lantai
+                    { symptomId: 'G06', cfExpert: 0.6 }, // Bulu kusam
+                    { symptomId: 'G39', cfExpert: 0.9 }, // Perut membesar (busung air)
+                    { symptomId: 'G26', cfExpert: 0.75 } // Badan kurus / kaheksia
+                ]
+            },
+            {
+                id: 'P11',
+                code: 'P11',
+                name: 'Batuk Darah (Laryngotracheitis / ILT)',
+                latin: 'Gallid alphaherpesvirus 1 (ILTV)',
+                risk: 'Tinggi',
+                description: 'Infeksi pernapasan akut yang ditandai ayam menjulurkan leher tersengal-sengal untuk bernapas, batuk mengeluarkan bekuan darah, dan eksudat hemoragik di mulut.',
+                causes: 'Virus Herpesvirus tipe 1 yang bereplikasi di membran mukosa trakea dan laring.',
+                prevention: 'Vaksinasi ILT dengan tetes mata pada daerah endemis, hindari percampuran unggas beda umur.',
+                treatment: 'Pemberian mukolitik untuk mencairkan sumbatan lendir trakea dan antibiotik sekunder untuk mencegah infeksi bakteri sekunder.',
+                rules: [
+                    { symptomId: 'G02', cfExpert: 0.85 },// Nafas sesak mengap-mengap
+                    { symptomId: 'G31', cfExpert: 0.9 }, // Batuk berdarah
+                    { symptomId: 'G35', cfExpert: 0.95 },// Lendir bercampur darah di rongga mulut
+                    { symptomId: 'G01', cfExpert: 0.5 }, // Nafsu makan berkurang
+                    { symptomId: 'G19', cfExpert: 0.7 }  // Menjulurkan leher / paruh ditaruh di dasar
+                ]
+            },
+            {
+                id: 'P12',
+                code: 'P12',
+                name: 'Mareks (Marek\'s Disease)',
+                latin: 'Marek\'s Disease Virus (MDV)',
+                risk: 'Tinggi',
+                description: 'Penyakit limfoproliferatif menular pada ayam yang menyerang saraf perifer, menyebabkan salah satu kaki menjulur ke depan dan satu ke belakang (kelumpuhan asimetris).',
+                causes: 'Gallid alphaherpesvirus 2 yang menyebar melalui debu folikel bulu ayam.',
+                prevention: 'Vaksinasi wajib pada umur 1 hari (DOC) di ruang penetasan (hatchery) sebelum ayam didistribusikan.',
+                treatment: 'Tidak ada pengobatan kuratif. Isolasi dan musnahkan ayam yang lumpuh permanen.',
+                rules: [
+                    { symptomId: 'G17', cfExpert: 0.9 }, // Lumpuh kaki / sayap asimetris
+                    { symptomId: 'G24', cfExpert: 0.8 }, // Sayap menggantung
+                    { symptomId: 'G25', cfExpert: 0.75 },// Kaki pincang
+                    { symptomId: 'G26', cfExpert: 0.65 },// Badan kurus
+                    { symptomId: 'G01', cfExpert: 0.5 }  // Nafsu makan turun
+                ]
+            },
+            {
+                id: 'P13',
+                code: 'P13',
+                name: 'CRD (Chronic Respiratory Disease)',
+                latin: 'Mycoplasma gallisepticum',
+                risk: 'Sedang',
+                description: 'Penyakit ngorok kronis menahun pada ayam pedaging yang sangat sering terjadi akibat kadar amonia tinggi dan perubahan suhu drastis.',
+                causes: 'Bakteri Mycoplasma gallisepticum tanpa dinding sel, mudah berkomplikasi dengan E. coli.',
+                prevention: 'Kontrol ventilasi udara tirai kandang, pastikan amonia kandang < 15 ppm, dan berikan desinfeksi udara berkala.',
+                treatment: 'Pemberian antibiotik makrolida (Tylosin, Tilmicosin) atau doksisiklin melalui air minum selama 4-5 hari.',
+                rules: [
+                    { symptomId: 'G03', cfExpert: 0.9 }, // Nafas ngorok basah
+                    { symptomId: 'G07', cfExpert: 0.8 }, // Keluar cairan dari hidung
+                    { symptomId: 'G08', cfExpert: 0.75 },// Fase bintik-bintik kuning
+                    { symptomId: 'G09', cfExpert: 0.65 },// Muka / jengger pucat
+                    { symptomId: 'G02', cfExpert: 0.75 } // Nafas sesak
+                ]
+            }
+        ];
+
+        const SYMPTOMS = [
+            // Kategori: Pernapasan (Respiratori)
+            { id: 'G02', code: 'G02', name: 'Nafas sesak / mengap-mengap', category: 'Pernapasan', desc: 'Ayam membuka paruh dan kesulitan mengambil udara' },
+            { id: 'G03', code: 'G03', name: 'Nafas ngorok basah (rales)', category: 'Pernapasan', desc: 'Terdengar suara dengkuran berlendir saat malam hari' },
+            { id: 'G04', code: 'G04', name: 'Bersin-bersin', category: 'Pernapasan', desc: 'Ayam menggelengkan kepala sambil mengeluarkan suara bersin' },
+            { id: 'G05', code: 'G05', name: 'Batuk', category: 'Pernapasan', desc: 'Suara letupan batuk kering atau berlendir di kawanan' },
+            { id: 'G07', code: 'G07', name: 'Keluar cairan / lendir dari hidung', category: 'Pernapasan', desc: 'Eksudat bening atau kental menyumbat lubang hidung' },
+            { id: 'G31', code: 'G31', name: 'Batuk berdarah (hemoptisis)', category: 'Pernapasan', desc: 'Bercak darah segar terbatuk ke dinding atau lantai kandang' },
+            { id: 'G35', code: 'G35', name: 'Lendir bercampur darah di rongga mulut', category: 'Pernapasan', desc: 'Gumpalan bekuan darah merah kehitaman di dalam paruh' },
+
+            // Kategori: Pencernaan & Feses
+            { id: 'G08', code: 'G08', name: 'Feses terdapat bintik-bintik kuning', category: 'Pencernaan', desc: 'Kotoran encer dengan sebaran nodul kuning seperti keju' },
+            { id: 'G14', code: 'G14', name: 'Peradangan dubur / anus kemerahan', category: 'Pencernaan', desc: 'Kulit sekitar kloaka membengkak dan kotoran menempel' },
+            { id: 'G16', code: 'G16', name: 'Kotoran kuning kehijauan', category: 'Pencernaan', desc: 'Feses cair berlendir dengan warna kuning asam empedu' },
+            { id: 'G18', code: 'G18', name: 'Mencret putih seperti pasta kapur', category: 'Pencernaan', desc: 'Diare putih pekat mengering di bulu sekitar pantat' },
+            { id: 'G33', code: 'G33', name: 'Mematuk daerah kloaka sendiri', category: 'Pencernaan', desc: 'Ayam sering mematuki duburnya akibat rasa panas/iritasi' },
+            { id: 'G38', code: 'G38', name: 'Kotoran bercampur darah (merah)', category: 'Pencernaan', desc: 'Feses encer kemerahan khas perdarahan usus sekum' },
+
+            // Kategori: Saraf & Perilaku
+            { id: 'G11', code: 'G11', name: 'Kepala berputar (tortikolis)', category: 'Saraf & Perilaku', desc: 'Leher terpelintir ke samping atau ditekuk ke bawah perut' },
+            { id: 'G15', code: 'G15', name: 'Kejang-kejang / tremor tubuh', category: 'Saraf & Perilaku', desc: 'Otot tubuh gemetar spasmodik mendadak saat disentuh' },
+            { id: 'G17', code: 'G17', name: 'Lumpuh kaki atau sayap', category: 'Saraf & Perilaku', desc: 'Tidak mampu berdiri dan menyeret sayap atau kakinya' },
+            { id: 'G19', code: 'G19', name: 'Paruh ditaruh di dasar lantai', category: 'Saraf & Perilaku', desc: 'Posisi leher lunglai rebah ke sekam akibat lemas parah' },
+            { id: 'G30', code: 'G30', name: 'Bergerombol di sudut kandang', category: 'Saraf & Perilaku', desc: 'Ayam menumpuk mencari kehangatan akibat demam/kedinginan' },
+
+            // Kategori: Kepala & Fasial
+            { id: 'G09', code: 'G09', name: 'Muka pucat', category: 'Kepala & Fasial', desc: 'Kulit wajah tampak kusam keputihan akibat anemia' },
+            { id: 'G10', code: 'G10', name: 'Kepala bengkak (swollen head)', category: 'Kepala & Fasial', desc: 'Seluruh batok kepala membesar akibat edema subkutan' },
+            { id: 'G12', code: 'G12', name: 'Muka bengkak', category: 'Kepala & Fasial', desc: 'Pipi membengkak menonjol di salah satu atau kedua sisi' },
+            { id: 'G21', code: 'G21', name: 'Sinus pada mata bengkak / berbusa', category: 'Kepala & Fasial', desc: 'Kelopak mata tertutup lendir berbusa dan berair' },
+            { id: 'G27', code: 'G27', name: 'Jengger pucat kebiruan', category: 'Kepala & Fasial', desc: 'Warna jengger kehilangan rona merah normalnya' },
+            { id: 'G28', code: 'G28', name: 'Pembengkakan pial (gelambir)', category: 'Kepala & Fasial', desc: 'Pial di bawah dagu menebal panas dan mengeras' },
+            { id: 'G29', code: 'G29', name: 'Pembengkakan fasial & sekitar mata', category: 'Kepala & Fasial', desc: 'Jaringan lunak wajah menonjol seperti mata burung hantu' },
+            { id: 'G40', code: 'G40', name: 'Jengger / kulit nampak membiru', category: 'Kepala & Fasial', desc: 'Sianosis parah pertanda hipoksia peredaran darah darah' },
+
+            // Kategori: Fisik & Performa Umum
+            { id: 'G01', code: 'G01', name: 'Nafsu makan & minum berkurang', category: 'Fisik & Performa', desc: 'Konsumsi pakan menurun >20% dari standar harian strain' },
+            { id: 'G06', code: 'G06', name: 'Bulu kusam & berdiri (mekar)', category: 'Fisik & Performa', desc: 'Bulu tidak mengilap, kotor berantakan dan menggigil' },
+            { id: 'G20', code: 'G20', name: 'Sendi kaki bengkak', category: 'Fisik & Performa', desc: 'Sendi hock membesar kemerahan dan panas disentuh' },
+            { id: 'G22', code: 'G22', name: 'Kematian mendadak dalam jumlah banyak', category: 'Fisik & Performa', desc: 'Mortalitas perakut tanpa tanda sakit kronis terlebih dahulu' },
+            { id: 'G24', code: 'G24', name: 'Sayap menggantung lunglai', category: 'Fisik & Performa', desc: 'Sayap menyentuh lantai sekam karena kelemahan motorik' },
+            { id: 'G25', code: 'G25', name: 'Kaki pincang saat berjalan', category: 'Fisik & Performa', desc: 'Jalan tertatih-tatih atau bertumpu pada satu kaki' },
+            { id: 'G26', code: 'G26', name: 'Badan kurus (atrofi tulang dada)', category: 'Fisik & Performa', desc: 'Tulang dada terasa menonjol tajam dan bobot turun' },
+            { id: 'G32', code: 'G32', name: 'Kelihatan mengantuk & mata terpejam', category: 'Fisik & Performa', desc: 'Ayam berdiam diri membisu di tepi tanpa merespons pakan' },
+            { id: 'G39', code: 'G39', name: 'Perut membesar kembung (asites)', category: 'Fisik & Performa', desc: 'Abdomen bagian bawah menggantung terisi cairan transudat' }
+        ];
+
+        // Skala Kepastian User (CF User)
+        const CF_SCALE = [
+            { label: 'Ragu-ragu', value: 0.2 },
+            { label: 'Cukup Yakin', value: 0.5 },
+            { label: 'Yakin', value: 0.8 },
+            { label: 'Sangat Yakin', value: 1.0 }
+        ];
+
+        // 10 Sampel Pengujian Jurnal (Tabel 6)
+        const RESEARCH_SAMPLES = [
+            {
+                id: 1,
+                name: 'Sampel 1 (Tabel 6)',
+                symptoms: ['G03', 'G07', 'G08', 'G09', 'G02'],
+                expectedDisease: 'CRD',
+                expectedCF: '100%',
+                journalMatch: 'Sesuai'
+            },
+            {
+                id: 2,
+                name: 'Sampel 2 (Tabel 6)',
+                symptoms: ['G07', 'G16', 'G31', 'G06'],
+                expectedDisease: 'Salesma Ayam',
+                expectedCF: '80%',
+                journalMatch: 'Sesuai'
+            },
+            {
+                id: 3,
+                name: 'Sampel 3 (Tabel 6)',
+                symptoms: ['G01', 'G07', 'G32', 'G02', 'G11'],
+                expectedDisease: 'Gumboro / Tetelo',
+                expectedCF: '54%',
+                journalMatch: 'Sesuai'
+            },
+            {
+                id: 4,
+                name: 'Sampel 4 (Tabel 6)',
+                symptoms: ['G39', 'G06'],
+                expectedDisease: 'Tipus Ayam',
+                expectedCF: '36%',
+                journalMatch: 'Sesuai'
+            },
+            {
+                id: 5,
+                name: 'Sampel 5 (Tabel 6)',
+                symptoms: ['G01', 'G07', 'G32', 'G02', 'G12'],
+                expectedDisease: 'Tetelo',
+                expectedCF: '48%',
+                journalMatch: 'Sesuai'
+            },
+            {
+                id: 6,
+                name: 'Sampel 6 (Tabel 6)',
+                symptoms: ['G14', 'G38'],
+                expectedDisease: 'Berak Darah',
+                expectedCF: '80%',
+                journalMatch: 'Sesuai'
+            },
+            {
+                id: 7,
+                name: 'Sampel 7 (Tabel 6)',
+                symptoms: ['G10', 'G22'],
+                expectedDisease: 'Flu Burung',
+                expectedCF: '60%',
+                journalMatch: 'Diskrepansi (Pakar: Berak Kapur)'
+            },
+            {
+                id: 8,
+                name: 'Sampel 8 (Tabel 6)',
+                symptoms: ['G18', 'G19', 'G32', 'G06'],
+                expectedDisease: 'Busung Ayam / Gumboro',
+                expectedCF: '64%',
+                journalMatch: 'Diskrepansi (Pakar: Gumboro)'
+            },
+            {
+                id: 9,
+                name: 'Sampel 9 (Tabel 6)',
+                symptoms: ['G14', 'G02'],
+                expectedDisease: 'Berak Kapur',
+                expectedCF: '36%',
+                journalMatch: 'Sesuai'
+            },
+            {
+                id: 10,
+                name: 'Sampel 10 (Tabel 6)',
+                symptoms: ['G04', 'G22', 'G35', 'G19'],
+                expectedDisease: 'Batuk Darah',
+                expectedCF: '60%',
+                journalMatch: 'Sesuai'
+            }
+        ];
+
+        /* =========================================================================
+           2. APPLICATION STATE
+           ========================================================================= */
+        let state = {
+            activeTab: 'beranda',
+            selectedCategory: 'SEMUA',
+            selectedSymptoms: new Set(),
+            confidenceValues: {}, // { 'G01': 0.8 }
+            history: [],
+            lastDiagnosisResults: null
+        };
+
+        /* =========================================================================
+           3. INITIALIZATION & LIFECYCLE
+           ========================================================================= */
+        document.addEventListener('DOMContentLoaded', () => {
+            loadHistory();
+            renderCategoryPills();
+            renderCatalog(DISEASES);
+            renderSymptomsChecklist();
+            renderResearchTestSamples();
+            updateHomeCounters();
+
+            const hasOnboarded = localStorage.getItem('ayamcare_onboarded');
+            if (!hasOnboarded) {
+                showScreen('onboarding');
+                document.getElementById('bottom-navigation').classList.add('hidden');
+            } else {
+                showScreen('home');
+            }
+
+            lucide.createIcons();
+        });
+
+        function finishOnboarding() {
+            localStorage.setItem('ayamcare_onboarded', 'true');
+            document.getElementById('bottom-navigation').classList.remove('hidden');
+            switchTab('beranda');
+        }
+
+        function resetAppToDefault() {
+            if (confirm('Apakah Anda yakin ingin mereset aplikasi? Semua riwayat dan cache onboarding akan dibersihkan.')) {
+                localStorage.clear();
+                state.selectedSymptoms.clear();
+                state.confidenceValues = {};
+                state.history = [];
+                location.reload();
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const text = document.getElementById('toast-message');
+            text.innerText = message;
+            toast.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-[-10px]');
+            toast.classList.add('opacity-100', 'translate-y-0');
+            setTimeout(() => {
+                toast.classList.remove('opacity-100', 'translate-y-0');
+                toast.classList.add('opacity-0', 'pointer-events-none', 'translate-y-[-10px]');
+            }, 2800);
+        }
+
+        function updateHomeCounters() {
+            document.getElementById('home-total-diseases').innerText = DISEASES.length;
+            document.getElementById('home-total-symptoms').innerText = SYMPTOMS.length;
+        }
+
+        /* =========================================================================
+           4. SCREEN & NAVIGATION CONTROLLER
+           ========================================================================= */
+        const SCREENS = ['onboarding', 'home', 'diagnosis', 'confidence', 'result', 'catalog', 'history', 'settings'];
+
+        function showScreen(screenName) {
+            SCREENS.forEach(id => {
+                const el = document.getElementById(`screen-${id}`);
+                if (el) el.classList.add('hidden');
+            });
+
+            const target = document.getElementById(`screen-${screenName}`);
+            if (target) {
+                target.classList.remove('hidden');
+                document.getElementById('screen-container').scrollTop = 0;
+            }
+
+            // Hide bottom nav during active diagnostic wizard
+            const bNav = document.getElementById('bottom-navigation');
+            if (screenName === 'diagnosis' || screenName === 'confidence' || screenName === 'onboarding') {
+                bNav.classList.add('hidden');
+            } else {
+                bNav.classList.remove('hidden');
+            }
+
+            lucide.createIcons();
+        }
+
+        function switchTab(tabKey) {
+            state.activeTab = tabKey;
+
+            const tabs = ['beranda', 'penyakit', 'riwayat', 'pengaturan'];
+            tabs.forEach(t => {
+                const btn = document.getElementById(`tab-${t}`);
+                if (btn) {
+                    if (t === tabKey) {
+                        btn.className = 'nav-item flex flex-col items-center gap-1 text-brand transition-colors';
+                    } else {
+                        btn.className = 'nav-item flex flex-col items-center gap-1 text-muted transition-colors hover:text-ink';
+                    }
+                }
+            });
+
+            if (tabKey === 'beranda') showScreen('home');
+            if (tabKey === 'penyakit') {
+                renderCatalog(DISEASES);
+                showScreen('catalog');
+            }
+            if (tabKey === 'riwayat') {
+                renderHistoryList();
+                showScreen('history');
+            }
+            if (tabKey === 'pengaturan') showScreen('settings');
+        }
+
+        /* =========================================================================
+           5. DIAGNOSIS FLOW: SYMPTOM SELECTION
+           ========================================================================= */
+        function startDiagnosisFlow() {
+            state.selectedSymptoms.clear();
+            state.confidenceValues = {};
+            state.selectedCategory = 'SEMUA';
+            renderCategoryPills();
+            renderSymptomsChecklist();
+            updateSymptomCounterUI();
+            showScreen('diagnosis');
+        }
+
+        function cancelDiagnosis() {
+            showScreen('home');
+            switchTab('beranda');
+        }
+
+        function clearAllSelectedSymptoms() {
+            state.selectedSymptoms.clear();
+            state.confidenceValues = {};
+            renderSymptomsChecklist();
+            updateSymptomCounterUI();
+            showToast('Pilihan gejala telah dikosongkan');
+        }
+
+        function renderCategoryPills() {
+            const container = document.getElementById('category-pills');
+            container.innerHTML = '';
+
+            const categories = ['SEMUA', 'Pernapasan', 'Pencernaan', 'Saraf & Perilaku', 'Kepala & Fasial', 'Fisik & Performa'];
+
+            categories.forEach(cat => {
+                const pill = document.createElement('button');
+                const isSelected = state.selectedCategory === cat;
+                pill.className = `px-3 py-1.5 rounded-full text-[11px] font-bold whitespace-nowrap transition-all ${
+                    isSelected ? 'bg-brand text-surface shadow-sm' : 'bg-surface border border-line text-slate-600 hover:border-brand/40'
+                }`;
+                pill.innerText = cat;
+                pill.onclick = () => {
+                    state.selectedCategory = cat;
+                    renderCategoryPills();
+                    renderSymptomsChecklist();
+                };
+                container.appendChild(pill);
+            });
+        }
+
+        function renderSymptomsChecklist() {
+            const container = document.getElementById('symptoms-list-container');
+            container.innerHTML = '';
+
+            const query = (document.getElementById('symptom-search')?.value || '').toLowerCase().trim();
+
+            let filteredSymptoms = SYMPTOMS;
+            if (state.selectedCategory !== 'SEMUA') {
+                filteredSymptoms = filteredSymptoms.filter(s => s.category === state.selectedCategory);
+            }
+            if (query) {
+                filteredSymptoms = filteredSymptoms.filter(s =>
+                    s.name.toLowerCase().includes(query) ||
+                    s.desc.toLowerCase().includes(query) ||
+                    s.code.toLowerCase().includes(query)
+                );
+            }
+
+            if (filteredSymptoms.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-xs text-muted bg-surface rounded-xl border border-line p-4">
+                        Tidak ada gejala yang cocok dengan pencarian.
+                    </div>
+                `;
+                return;
+            }
+
+            // Group by category if displaying SEMUA
+            const groups = state.selectedCategory === 'SEMUA'
+                ? [...new Set(filteredSymptoms.map(s => s.category))]
+                : [state.selectedCategory];
+
+            groups.forEach(cat => {
+                const catSymptoms = filteredSymptoms.filter(s => s.category === cat);
+                if (catSymptoms.length === 0) return;
+
+                const groupEl = document.createElement('div');
+                groupEl.className = 'space-y-2';
+
+                const title = document.createElement('span');
+                title.className = 'text-[11px] font-extrabold text-muted uppercase tracking-wider block px-1';
+                title.innerText = cat;
+                groupEl.appendChild(title);
+
+                catSymptoms.forEach(s => {
+                    const isChecked = state.selectedSymptoms.has(s.id);
+                    const item = document.createElement('div');
+                    item.onclick = () => toggleSymptom(s.id);
+                    item.className = `p-3 rounded-xl border transition-all cursor-pointer flex items-start gap-3 shadow-sm ${
+                        isChecked ? 'bg-blue-50/70 border-brand shadow-blue-100' : 'bg-surface border-line hover:border-brand/40'
+                    }`;
+
+                    item.innerHTML = `
+                        <div class="w-4 h-4 rounded-md mt-0.5 border flex items-center justify-center shrink-0 transition-colors ${
+                            isChecked ? 'bg-brand border-brand text-surface' : 'border-slate-300 bg-surface'
+                        }">
+                            ${isChecked ? '<i data-lucide="check" class="w-3 h-3 stroke-[3]"></i>' : ''}
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center justify-between gap-1">
+                                <span class="text-xs font-bold ${isChecked ? 'text-brand' : 'text-ink'}">${s.name}</span>
+                                <span class="text-[10px] text-muted font-mono bg-slate-100 px-1.5 py-0.2 rounded font-semibold">${s.code}</span>
+                            </div>
+                            <p class="text-[11px] text-muted mt-0.5 leading-relaxed">${s.desc}</p>
+                        </div>
+                    `;
+                    groupEl.appendChild(item);
+                });
+
+                container.appendChild(groupEl);
+            });
+
+            lucide.createIcons();
+        }
+
+        function filterSymptoms() {
+            renderSymptomsChecklist();
+        }
+
+        function toggleSymptom(id) {
+            if (state.selectedSymptoms.has(id)) {
+                state.selectedSymptoms.delete(id);
+                delete state.confidenceValues[id];
+            } else {
+                state.selectedSymptoms.add(id);
+                state.confidenceValues[id] = 0.8; // Default: Yakin
+            }
+            renderSymptomsChecklist();
+            updateSymptomCounterUI();
+        }
+
+        function updateSymptomCounterUI() {
+            const count = state.selectedSymptoms.size;
+            const countLabel = document.getElementById('selected-symptoms-count');
+            const btnNext = document.getElementById('btn-to-confidence');
+            countLabel.innerText = `${count} gejala dipilih`;
+
+            if (count >= 2) {
+                btnNext.removeAttribute('disabled');
+            } else {
+                btnNext.setAttribute('disabled', 'true');
+            }
+        }
+
+        /* =========================================================================
+           6. DIAGNOSIS FLOW: CONFIDENCE LEVEL (CF USER)
+           ========================================================================= */
+        function goToConfidenceScreen() {
+            if (state.selectedSymptoms.size < 2) {
+                showToast('Pilih minimal 2 gejala untuk diagnosis.');
+                return;
+            }
+            renderConfidenceInputs();
+            showScreen('confidence');
+        }
+
+        function renderConfidenceInputs() {
+            const container = document.getElementById('confidence-inputs-container');
+            container.innerHTML = '';
+
+            state.selectedSymptoms.forEach(sId => {
+                const symptom = SYMPTOMS.find(s => s.id === sId);
+                const currentVal = state.confidenceValues[sId] || 0.8;
+
+                const card = document.createElement('div');
+                card.className = 'bg-surface border border-line rounded-xl p-3.5 space-y-2.5 shadow-sm';
+                card.innerHTML = `
+                    <div class="flex justify-between items-start gap-2">
+                        <div>
+                            <span class="text-[10px] font-bold text-brand uppercase tracking-wider">${symptom.category}</span>
+                            <h4 class="text-xs font-bold text-ink">${symptom.name}</h4>
+                        </div>
+                        <span class="text-[10px] font-mono text-muted bg-slate-100 px-1.5 py-0.5 rounded font-bold">${symptom.code}</span>
+                    </div>
+                    <div class="grid grid-cols-4 gap-1.5 pt-1">
+                        ${CF_SCALE.map(scale => `
+                            <button onclick="setSymptomConfidence('${sId}', ${scale.value})" class="py-2 px-1 text-center rounded-lg border text-[11px] font-bold transition-all ${
+                                currentVal === scale.value
+                                    ? 'bg-brand text-surface border-brand shadow-sm shadow-brand/20'
+                                    : 'bg-canvas text-slate-600 border-line hover:border-brand/40'
+                            }">
+                                <span class="block">${scale.label}</span>
+                                <span class="text-[9px] opacity-75 font-mono block mt-0.5">CF ${scale.value}</span>
+                            </button>
+                        `).join('')}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function setSymptomConfidence(sId, value) {
+            state.confidenceValues[sId] = value;
+            renderConfidenceInputs();
+        }
+
+        /* =========================================================================
+           7. CERTAINTY FACTOR CALCULATION ENGINE (STANDAR SHORTLIFFE 1975)
+           ========================================================================= */
+        function calculateDiagnosis() {
+            const results = [];
+
+            DISEASES.forEach(disease => {
+                let matchedRules = [];
+                let combinedCF = 0;
+                let steps = [];
+
+                disease.rules.forEach(rule => {
+                    if (state.selectedSymptoms.has(rule.symptomId)) {
+                        const cfUser = state.confidenceValues[rule.symptomId] || 0.8;
+                        // CF(H,E) = CF_user * CF_pakar
+                        const cfCalculated = Number((cfUser * rule.cfExpert).toFixed(4));
+                        const symptomData = SYMPTOMS.find(s => s.id === rule.symptomId);
+
+                        matchedRules.push({
+                            symptomId: rule.symptomId,
+                            symptomName: symptomData ? symptomData.name : rule.symptomId,
+                            cfUser,
+                            cfExpert: rule.cfExpert,
+                            cfCalculated
+                        });
+                    }
+                });
+
+                // Sequential CF combination if at least 1 rule matches
+                if (matchedRules.length > 0) {
+                    combinedCF = matchedRules[0].cfCalculated;
+                    steps.push(`CF1 [${matchedRules[0].symptomId}]: ${matchedRules[0].cfCalculated.toFixed(3)}`);
+
+                    for (let i = 1; i < matchedRules.length; i++) {
+                        const nextCF = matchedRules[i].cfCalculated;
+                        const prevCF = combinedCF;
+
+                        // Standard Shortliffe formula for positive CF values:
+                        // CF_comb = CF1 + CF2 * (1 - CF1)
+                        if (prevCF >= 0 && nextCF >= 0) {
+                            combinedCF = prevCF + nextCF * (1 - prevCF);
+                        } else if (prevCF < 0 && nextCF < 0) {
+                            combinedCF = prevCF + nextCF * (1 + prevCF);
+                        } else {
+                            combinedCF = (prevCF + nextCF) / (1 - Math.min(Math.abs(prevCF), Math.abs(nextCF)));
+                        }
+
+                        steps.push(`+ CF${i+1} [${matchedRules[i].symptomId}]: ${prevCF.toFixed(3)} + ${nextCF.toFixed(3)}*(1-${prevCF.toFixed(3)}) = ${combinedCF.toFixed(3)}`);
+                    }
+
+                    const percentage = Math.min(100, Math.round(combinedCF * 100));
+
+                    results.push({
+                        disease,
+                        percentage,
+                        cfScore: combinedCF,
+                        matchedRules,
+                        steps
+                    });
+                }
+            });
+
+            // Sort descending by highest CF score
+            results.sort((a, b) => b.cfScore - a.cfScore);
+
+            if (results.length === 0) {
+                showToast('Gejala yang dipilih tidak cocok dengan basis aturan penyakit apapun.');
+                return;
+            }
+
+            state.lastDiagnosisResults = results;
+            displayDiagnosisResult(results);
+            saveDiagnosisToHistory(results[0]);
+        }
+
+        function displayDiagnosisResult(results) {
+            const primary = results[0];
+            const others = results.slice(1, 4).filter(r => r.cfScore > 0.05);
+
+            // Primary Result Card
+            document.getElementById('result-primary-name').innerText = primary.disease.name;
+            document.getElementById('result-primary-latin').innerText = primary.disease.latin;
+            document.getElementById('result-primary-percentage').innerText = `${primary.percentage}%`;
+            document.getElementById('result-primary-bar').style.width = `${primary.percentage}%`;
+            document.getElementById('result-matched-count').innerText = `${primary.matchedRules.length} gejala cocok`;
+
+            // Differential Diagnosis (Alternatif Lain)
+            const diffContainer = document.getElementById('result-differentials-list');
+            diffContainer.innerHTML = '';
+            if (others.length > 0) {
+                document.getElementById('result-differentials-box').classList.remove('hidden');
+                others.forEach(item => {
+                    const el = document.createElement('div');
+                    el.className = 'bg-surface border border-line p-3 rounded-xl flex items-center justify-between shadow-sm cursor-pointer hover:border-brand/40';
+                    el.onclick = () => openDiseaseDetail(item.disease.id);
+                    el.innerHTML = `
+                        <div>
+                            <p class="text-xs font-bold text-ink">${item.disease.name}</p>
+                            <p class="text-[10px] text-muted">${item.matchedRules.length} gejala terindikasi</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-xs font-black text-brand bg-brand-light px-2 py-0.5 rounded">${item.percentage}%</span>
+                        </div>
+                    `;
+                    diffContainer.appendChild(el);
+                });
+            } else {
+                document.getElementById('result-differentials-box').classList.add('hidden');
+            }
+
+            // Matched Symptoms List
+            const symList = document.getElementById('result-symptoms-list');
+            symList.innerHTML = '';
+            primary.matchedRules.forEach(rule => {
+                const li = document.createElement('li');
+                li.className = 'flex justify-between items-center py-1.5 border-b border-line/60 last:border-none';
+                li.innerHTML = `
+                    <span class="text-ink font-medium">${rule.symptomName}</span>
+                    <span class="font-mono text-[10px] text-brand bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+                        Pakar: ${rule.cfExpert} | User: ${rule.cfUser} &rarr; CF: ${rule.cfCalculated.toFixed(2)}
+                    </span>
+                `;
+                symList.appendChild(li);
+            });
+
+            // Math Calculation Steps
+            const stepsList = document.getElementById('calc-steps-list');
+            stepsList.innerHTML = '';
+            primary.steps.forEach(st => {
+                const div = document.createElement('div');
+                div.innerText = st;
+                stepsList.appendChild(div);
+            });
+            const finalDiv = document.createElement('div');
+            finalDiv.className = 'font-bold text-brand pt-1 border-t border-line mt-1';
+            finalDiv.innerText = `Final CF: ${primary.cfScore.toFixed(4)} => ${primary.percentage}%`;
+            stepsList.appendChild(finalDiv);
+
+            // Recommendations List
+            const recList = document.getElementById('result-recommendations-list');
+            recList.innerHTML = '';
+            const steps = [
+                `Tindakan darurat awal: ${primary.disease.treatment}`,
+                `Biosekuriti lingkungan: ${primary.disease.prevention}`,
+                'Segera pisahkan ayam dengan gejala terberat ke kandang karantina isolasi.',
+                'Disinfeksi tandon air minum, bersihkan nipple line, dan ganti sekam lembap berbau amonia.'
+            ];
+            steps.forEach(st => {
+                const li = document.createElement('li');
+                li.innerText = st;
+                recList.appendChild(li);
+            });
+
+            showScreen('result');
+        }
+
+        function toggleCalcDetails() {
+            const content = document.getElementById('calc-details-content');
+            const chevron = document.getElementById('calc-chevron');
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                chevron.classList.add('rotate-180');
+            } else {
+                content.classList.add('hidden');
+                chevron.classList.remove('rotate-180');
+            }
+        }
+
+        function shareDiagnosisSummary() {
+            const name = document.getElementById('result-primary-name').innerText;
+            const pct = document.getElementById('result-primary-percentage').innerText;
+            const text = `Hasil Diagnosis AyamCare: Indikasi ${name} dengan kepastian ${pct} (Metode Certainty Factor).`;
+
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Hasil Diagnosis AyamCare',
+                    text: text
+                }).catch(() => { });
+            } else {
+                navigator.clipboard.writeText(text);
+                showToast('Ringkasan diagnosis disalin ke clipboard');
+            }
+        }
+
+        /* =========================================================================
+           8. RESEARCH TEST BENCH MODAL (10 SAMPEL JURNAL TABEL 6)
+           ========================================================================= */
+        function openResearchTestModal() {
+            const modal = document.getElementById('test-bench-modal');
+            const content = document.getElementById('test-bench-modal-content');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modal.classList.add('opacity-100');
+            content.classList.remove('translate-y-8');
+            content.classList.add('translate-y-0');
+            lucide.createIcons();
+        }
+
+        function closeResearchTestModal() {
+            const modal = document.getElementById('test-bench-modal');
+            const content = document.getElementById('test-bench-modal-content');
+            modal.classList.remove('opacity-100');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            content.classList.remove('translate-y-0');
+            content.classList.add('translate-y-8');
+        }
+
+        function renderResearchTestSamples() {
+            const container = document.getElementById('test-samples-list');
+            if (!container) return;
+            container.innerHTML = '';
+
+            RESEARCH_SAMPLES.forEach(sample => {
+                const card = document.createElement('div');
+                card.className = 'bg-surface border border-line rounded-xl p-3 space-y-2 hover:border-brand/40 transition-colors shadow-sm';
+                card.innerHTML = `
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <span class="text-[10px] font-mono font-bold text-brand bg-brand-light px-2 py-0.5 rounded">Sampel #${sample.id}</span>
+                            <h4 class="text-xs font-bold text-ink mt-1">Target Jurnal: ${sample.expectedDisease} (${sample.expectedCF})</h4>
+                        </div>
+                        <span class="text-[9px] font-bold ${sample.journalMatch.includes('Diskrepansi') ? 'text-amber-600 bg-amber-50' : 'text-emerald-700 bg-emerald-50'} px-2 py-0.5 rounded-full">
+                            ${sample.journalMatch}
+                        </span>
+                    </div>
+                    <div class="text-[11px] text-muted">
+                        Gejala: ${sample.symptoms.map(s => {
+                            const sym = SYMPTOMS.find(x => x.id === s);
+                            return sym ? sym.name : s;
+                        }).join(', ')}
+                    </div>
+                    <button onclick="runSampleTest(${sample.id})"
+                        class="w-full py-1.5 bg-blue-50 hover:bg-brand hover:text-surface text-brand rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5">
+                        <i data-lucide="play" class="w-3 h-3"></i>
+                        <span>Uji Kasus Ini Sekarang</span>
+                    </button>
+                `;
+                container.appendChild(card);
+            });
+            lucide.createIcons();
+        }
+
+        function runSampleTest(sampleId) {
+            closeResearchTestModal();
+            const sample = RESEARCH_SAMPLES.find(s => s.id === sampleId);
+            if (!sample) return;
+
+            state.selectedSymptoms.clear();
+            state.confidenceValues = {};
+
+            sample.symptoms.forEach(sId => {
+                state.selectedSymptoms.add(sId);
+                state.confidenceValues[sId] = 0.8; // Standar evaluasi yakin
+            });
+
+            calculateDiagnosis();
+            showToast(`Menjalankan uji kasus Sampel #${sample.id}`);
+        }
+
+        /* =========================================================================
+           9. LOCAL STORAGE HISTORY
+           ========================================================================= */
+        function saveDiagnosisToHistory(primaryResult) {
+            const historyItem = {
+                id: 'HIST-' + Date.now(),
+                date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }),
+                time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+                diseaseName: primaryResult.disease.name,
+                diseaseId: primaryResult.disease.id,
+                percentage: primaryResult.percentage,
+                symptomsCount: primaryResult.matchedRules.length
+            };
+
+            state.history.unshift(historyItem);
+            if (state.history.length > 50) state.history.pop();
+            try {
+                localStorage.setItem('ayamcare_history', JSON.stringify(state.history));
+            } catch (e) {
+                console.error('LocalStorage write error', e);
+            }
+        }
+
+        function loadHistory() {
+            try {
+                const data = localStorage.getItem('ayamcare_history');
+                if (data) state.history = JSON.parse(data);
+            } catch (e) {
+                state.history = [];
+            }
+        }
+
+        function renderHistoryList() {
+            const container = document.getElementById('history-list');
+            container.innerHTML = '';
+
+            if (state.history.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 px-4 space-y-2 bg-surface rounded-2xl border border-line">
+                        <div class="w-12 h-12 rounded-full bg-blue-50 text-brand flex items-center justify-center mx-auto">
+                            <i data-lucide="inbox" class="w-6 h-6"></i>
+                        </div>
+                        <p class="text-xs font-bold text-ink">Belum Ada Riwayat Diagnosis</p>
+                        <p class="text-[11px] text-muted">Jalankan sesi diagnosis pada menu beranda untuk mencatat hasil pemeriksaan.</p>
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
+
+            state.history.forEach(item => {
+                const el = document.createElement('div');
+                el.className = 'bg-surface border border-line rounded-xl p-3.5 space-y-2 shadow-sm';
+                el.innerHTML = `
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <span class="text-[10px] text-muted font-medium">${item.date} • ${item.time}</span>
+                            <h4 class="text-xs font-extrabold text-ink">${item.diseaseName}</h4>
+                        </div>
+                        <span class="text-xs font-black text-brand bg-brand-light px-2 py-0.5 rounded-md border border-blue-200">${item.percentage}%</span>
+                    </div>
+                    <div class="flex justify-between items-center text-[11px] text-muted pt-1 border-t border-line">
+                        <span>${item.symptomsCount} gejala terkonfirmasi</span>
+                        <span class="text-brand font-bold cursor-pointer hover:underline" onclick="openDiseaseDetail('${item.diseaseId}')">Detail Penyakit &rarr;</span>
+                    </div>
+                `;
+                container.appendChild(el);
+            });
+            lucide.createIcons();
+        }
+
+        function clearHistory() {
+            if (state.history.length === 0) return;
+            if (confirm('Hapus seluruh riwayat diagnosis tersimpan di perangkat ini?')) {
+                state.history = [];
+                localStorage.removeItem('ayamcare_history');
+                renderHistoryList();
+                showToast('Seluruh riwayat diagnosis telah dibersihkan');
+            }
+        }
+
+        /* =========================================================================
+           10. DISEASE CATALOG & MODAL
+           ========================================================================= */
+        function renderCatalog(items) {
+            const container = document.getElementById('catalog-list');
+            container.innerHTML = '';
+
+            if (items.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-xs text-muted bg-surface rounded-xl border border-line p-4">
+                        Tidak ada penyakit yang cocok dengan kata kunci pencarian.
+                    </div>
+                `;
+                return;
+            }
+
+            items.forEach(d => {
+                const card = document.createElement('div');
+                card.onclick = () => openDiseaseDetail(d.id);
+                card.className = 'bg-surface border border-line rounded-xl p-3.5 space-y-2 cursor-pointer hover:border-brand/50 transition-all shadow-sm';
+                card.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-[10px] font-mono font-bold text-brand bg-brand-light px-1.5 py-0.2 rounded border border-blue-200">${d.id}</span>
+                                <span class="text-[9px] font-bold text-slate-600 bg-slate-100 px-1.5 py-0.2 rounded">${d.risk}</span>
+                            </div>
+                            <h3 class="text-xs font-bold text-ink mt-1">${d.name}</h3>
+                            <p class="text-[11px] text-muted italic">${d.latin}</p>
+                        </div>
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-muted shrink-0 mt-1"></i>
+                    </div>
+                    <p class="text-[11px] text-muted line-clamp-2 leading-relaxed">${d.description}</p>
+                    <div class="pt-1 flex items-center justify-between text-[10px] text-muted border-t border-line">
+                        <span class="bg-canvas px-2 py-0.5 rounded font-medium">${d.rules.length} Aturan Gejala</span>
+                        <span class="text-brand font-bold">Lihat Panduan &rarr;</span>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            lucide.createIcons();
+        }
+
+        function filterCatalog() {
+            const query = document.getElementById('catalog-search').value.toLowerCase().trim();
+            const filtered = DISEASES.filter(d =>
+                d.name.toLowerCase().includes(query) ||
+                d.latin.toLowerCase().includes(query) ||
+                d.id.toLowerCase().includes(query) ||
+                d.description.toLowerCase().includes(query)
+            );
+            renderCatalog(filtered);
+        }
+
+        function openDiseaseDetail(diseaseId) {
+            const disease = DISEASES.find(d => d.id === diseaseId);
+            if (!disease) return;
+
+            document.getElementById('modal-disease-code').innerText = disease.id;
+            document.getElementById('modal-disease-risk').innerText = disease.risk;
+            document.getElementById('modal-disease-name').innerText = disease.name;
+            document.getElementById('modal-disease-latin').innerText = disease.latin;
+            document.getElementById('modal-disease-desc').innerText = disease.description;
+            document.getElementById('modal-disease-prevention').innerText = disease.prevention;
+            document.getElementById('modal-disease-treatment').innerText = disease.treatment;
+
+            const symContainer = document.getElementById('modal-disease-symptoms');
+            symContainer.innerHTML = '';
+            disease.rules.forEach(rule => {
+                const s = SYMPTOMS.find(x => x.id === rule.symptomId);
+                const li = document.createElement('li');
+                li.innerHTML = `<span class="text-ink font-semibold">${s ? s.name : rule.symptomId}</span> <span class="text-[10px] text-brand font-mono">(Bobot Pakar CF: ${rule.cfExpert})</span>`;
+                symContainer.appendChild(li);
+            });
+
+            const modal = document.getElementById('disease-modal');
+            const content = document.getElementById('disease-modal-content');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modal.classList.add('opacity-100');
+            content.classList.remove('translate-y-8');
+            content.classList.add('translate-y-0');
+            lucide.createIcons();
+        }
+
+        function closeDiseaseModal() {
+            const modal = document.getElementById('disease-modal');
+            const content = document.getElementById('disease-modal-content');
+            modal.classList.remove('opacity-100');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            content.classList.remove('translate-y-0');
+            content.classList.add('translate-y-8');
+        }
+    </script>
+</body>
+
+</html>

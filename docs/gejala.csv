@@ -1,0 +1,41 @@
+﻿kode_gejala,nama_gejala_artikel,sumber,doi,catatan
+G01,Nafsu makan berkurang,"Agustin, Mulyani & Sopandi (2024), Jurnal Algoritma 21(2), 332-342",https://doi.org/10.33364/algoritma/v.21-2.1526,
+G02,Nafas sesak,"Agustin, Mulyani & Sopandi (2024), Jurnal Algoritma 21(2), 332-342",https://doi.org/10.33364/algoritma/v.21-2.1526,
+G03,Nafas ngorok basah,"Agustin, Mulyani & Sopandi (2024), Jurnal Algoritma 21(2), 332-342",https://doi.org/10.33364/algoritma/v.21-2.1526,
+G04,Bersin-bersin,"Agustin, Mulyani & Sopandi (2024), Jurnal Algoritma 21(2), 332-342",https://doi.org/10.33364/algoritma/v.21-2.1526,
+G05,Batuk,"Agustin, Mulyani & Sopandi (2024), Jurnal Algoritma 21(2), 332-342",https://doi.org/10.33364/algoritma/v.21-2.1526,
+G06,Bulu kusam,"Agustin, Mulyani & Sopandi (2024), Jurnal Algoritma 21(2), 332-342",https://doi.org/10.33364/algoritma/v.21-2.1526,Label sama/serupa muncul pada kode lain di tabel artikel; pertahankan kode sumber dan validasi sebelum normalisasi.
+G07,Keluar cairan dari hidung,"Agustin, Mulyani & Sopandi (2024), Jurnal Algoritma 21(2), 332-342",https://doi.org/10.33364/algoritma/v.21-2.1526,Label sama/serupa muncul pada kode lain di tabel artikel; pertahankan kode sumber dan validasi sebelum normalisasi.
+G08,Fase bintik-bintik kuning,"Agustin, Mulyani & Sopandi (2024), Jurnal Algoritma 21(2), 332-342",https://doi.org/10.33364/algoritma/v.21-2.1526,
+G09,Muka pucat,"Agustin, Mulyani & Sopandi (2024), Jurnal Algoritma 21(2), 332-342",https://doi.org/10.33364/algoritma/v.21-2.1526,
+G10,Kepala bengkak,"Agustin, Mulyani & Sopandi (2024), Jurnal Algoritma 21(2), 332-342",https://doi.org/10.33364/algoritma/v.21-2.1526,
+G11,Kepala berputar,"Agustin, Mulyani & Sopandi (2024), Jurnal Algoritma 21(2), 332-342",https://doi.org/10.33364/algoritma/v.21-2.1526,
+G12,Muka bengkak,"Agustin, Mulyani & Sopandi (2024), Jurnal Algoritma 21(2), 332-342",https://doi.org/10.33364/algoritma/v.21-2.1526,
+G13,Bulu kusam,"Agustin, Mulyani & Sopandi (2024), Jurnal Algoritma 21(2), 332-342",https://doi.org/10.33364/algoritma/v.21-2.1526,Label sama/serupa muncul pada kode lain di tabel artikel; pertahankan kode sumber dan validasi sebelum normalisasi.
+G14,Peradangan dubur,"Agustin, Mulyani & Sopandi (2024), Jurnal Algoritma 21(2), 332-342",https://doi.org/10.33364/algoritma/v.21-2.1526,
+G15,Kejang-kejang,"Agustin, Mulyani & Sopandi (2024), Jurnal Algoritma 21(2), 332-342",https://doi.org/10.33364/algoritma/v.21-2.1526,
+G16,Kotoran kuning kehijauan,"Agustin, Mulyani & Sopandi (2024), Jurnal Algoritma 21(2), 332-342",https://doi.org/10.33364/algoritma/v.21-2.1526,
+G17,Lumpuh,"Agustin, Mulyani & Sopandi (2024), Jurnal Algoritma 21(2), 332-342",https://doi.org/10.33364/algoritma/v.21-2.1526,
+G18,Mencret putih,"Agustin, Mulyani & Sopandi (2024), Jurnal Algoritma 21(2), 332-342",https://doi.org/10.33364/algoritma/v.21-2.1526,
+G19,Paruh ditaruh dasar,"Agustin, Mulyani & Sopandi (2024), Jurnal Algoritma 21(2), 332-342",https://doi.org/10.33364/algoritma/v.21-2.1526,
+G20,Kaki bengkak,"Agustin, Mulyani & Sopandi (2024), Jurnal Algoritma 21(2), 332-342",https://doi.org/10.33364/algoritma/v.21-2.1526,
+G21,Sinus pada mata,"Agustin, Mulyani & Sopandi (2024), Jurnal Algoritma 21(2), 332-342",https://doi.org/10.33364/algoritma/v.21-2.1526,
+G22,Mati mendadak,"Agustin, Mulyani & Sopandi (2024), Jurnal Algoritma 21(2), 332-342",https://doi.org/10.33364/algoritma/v.21-2.1526,
+G23,Keluar cairan dari hidung,"Agustin, Mulyani & Sopandi (2024), Jurnal Algoritma 21(2), 332-342",https://doi.org/10.33364/algoritma/v.21-2.1526,Label sama/serupa muncul pada kode lain di tabel artikel; pertahankan kode sumber dan validasi sebelum normalisasi.
+G24,Sayap menggantung,"Agustin, Mulyani & Sopandi (2024), Jurnal Algoritma 21(2), 332-342",https://doi.org/10.33364/algoritma/v.21-2.1526,
+G25,Kaki pincang,"Agustin, Mulyani & Sopandi (2024), Jurnal Algoritma 21(2), 332-342",https://doi.org/10.33364/algoritma/v.21-2.1526,Label sama/serupa muncul pada kode lain di tabel artikel; pertahankan kode sumber dan validasi sebelum normalisasi.
+G26,Badan kurus,"Agustin, Mulyani & Sopandi (2024), Jurnal Algoritma 21(2), 332-342",https://doi.org/10.33364/algoritma/v.21-2.1526,
+G27,Jengger pucat,"Agustin, Mulyani & Sopandi (2024), Jurnal Algoritma 21(2), 332-342",https://doi.org/10.33364/algoritma/v.21-2.1526,
+G28,Pembengkakan pial,"Agustin, Mulyani & Sopandi (2024), Jurnal Algoritma 21(2), 332-342",https://doi.org/10.33364/algoritma/v.21-2.1526,
+G29,Pembengkakan daerah fasial dan sekitar mata,"Agustin, Mulyani & Sopandi (2024), Jurnal Algoritma 21(2), 332-342",https://doi.org/10.33364/algoritma/v.21-2.1526,Label sama/serupa muncul pada kode lain di tabel artikel; pertahankan kode sumber dan validasi sebelum normalisasi.
+G30,Bergerombol di sudut kandang,"Agustin, Mulyani & Sopandi (2024), Jurnal Algoritma 21(2), 332-342",https://doi.org/10.33364/algoritma/v.21-2.1526,
+G31,Batuk berdarah,"Agustin, Mulyani & Sopandi (2024), Jurnal Algoritma 21(2), 332-342",https://doi.org/10.33364/algoritma/v.21-2.1526,Label sama/serupa muncul pada kode lain di tabel artikel; pertahankan kode sumber dan validasi sebelum normalisasi.
+G32,Kelihatan mengantuk dengan bulu berdiri,"Agustin, Mulyani & Sopandi (2024), Jurnal Algoritma 21(2), 332-342",https://doi.org/10.33364/algoritma/v.21-2.1526,
+G33,Mematuk daerah kloak,"Agustin, Mulyani & Sopandi (2024), Jurnal Algoritma 21(2), 332-342",https://doi.org/10.33364/algoritma/v.21-2.1526,
+G34,Batuk berdarah,"Agustin, Mulyani & Sopandi (2024), Jurnal Algoritma 21(2), 332-342",https://doi.org/10.33364/algoritma/v.21-2.1526,Label sama/serupa muncul pada kode lain di tabel artikel; pertahankan kode sumber dan validasi sebelum normalisasi.
+G35,Terdapat lendir bercampur darah rongga mulut,"Agustin, Mulyani & Sopandi (2024), Jurnal Algoritma 21(2), 332-342",https://doi.org/10.33364/algoritma/v.21-2.1526,
+G36,Kaki pincang,"Agustin, Mulyani & Sopandi (2024), Jurnal Algoritma 21(2), 332-342",https://doi.org/10.33364/algoritma/v.21-2.1526,Label sama/serupa muncul pada kode lain di tabel artikel; pertahankan kode sumber dan validasi sebelum normalisasi.
+G37,Pembengkakan daerah fasial dan sekitar mata,"Agustin, Mulyani & Sopandi (2024), Jurnal Algoritma 21(2), 332-342",https://doi.org/10.33364/algoritma/v.21-2.1526,Label sama/serupa muncul pada kode lain di tabel artikel; pertahankan kode sumber dan validasi sebelum normalisasi.
+G38,Kotoran berdarah,"Agustin, Mulyani & Sopandi (2024), Jurnal Algoritma 21(2), 332-342",https://doi.org/10.33364/algoritma/v.21-2.1526,
+G39,Perut membesar,"Agustin, Mulyani & Sopandi (2024), Jurnal Algoritma 21(2), 332-342",https://doi.org/10.33364/algoritma/v.21-2.1526,
+G40,Nampak membiru,"Agustin, Mulyani & Sopandi (2024), Jurnal Algoritma 21(2), 332-342",https://doi.org/10.33364/algoritma/v.21-2.1526,

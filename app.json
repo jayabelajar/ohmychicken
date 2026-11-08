@@ -1,0 +1,26 @@
+{
+  "expo": {
+    "name": "AyamCare",
+    "slug": "ayamcare",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "backgroundColor": "#1E56A0"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.ayamcare.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#1E56A0",
+        "foregroundImage": "./assets/android-icon-foreground.png"
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}
