@@ -1,26 +1,30 @@
 export const COLORS = {
-  brand: '#1E56A0', // AyamCare Blue
-  brandDark: '#163E75',
+  // Brand Blues
+  brand: '#2563EB', // Vibrant Blue
+  brandDark: '#1E40AF',
+  brandNavy: '#0F172A',
   brandLight: '#EFF6FF',
   brandAccent: '#0284C7',
-  brandRing: '#93C5FD',
-  canvas: '#F4F7FB',
+
+  // Canvas & Surfaces
+  canvas: '#F4F7FB', // Soft modern canvas as in image
   surface: '#FFFFFF',
-  ink: '#0F172A',
-  muted: '#64748B',
-  line: '#E2E8F0',
+  surfaceSubtle: '#F8FAFC',
+  cardMint: '#ECFDF5',
+  cardLavender: '#F5F3FF',
+  cardSky: '#E0F2FE',
+  cardPeach: '#FFF7ED',
+  cardRose: '#FFF1F2',
+
+  // Inks & Typography
+  ink: '#111827',
+  inkSecondary: '#374151',
+  muted: '#6B7280',
+  line: '#E5E7EB',
+  lineSubtle: '#F3F4F6',
+
+  // Functional
   success: '#10B981',
-  successLight: '#ECFDF5',
   warning: '#F59E0B',
-  warningLight: '#FEF3C7',
-  danger: '#EF4444',
-  dangerLight: '#FEF2F2'
+  danger: '#EF4444'
 };
-
-export const FONTS = {
-  regular: 'normal',
-  medium: '500',
-  bold: '700',
-  heavy: '800'
-};
-

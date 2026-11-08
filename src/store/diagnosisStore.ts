@@ -3,21 +3,39 @@ import { Disease, DiseaseDiagnosisResult } from '../core/certainty-factor/types'
 import { DISEASES, DIAGNOSTIC_RULES, RESEARCH_SAMPLES } from '../data/knowledgeBase';
 import { diagnoseDiseases } from '../core/certainty-factor/calculateCF';
 
+export interface UserProfile {
+  id: string;
+  name: string;
+  farmName: string;
+  email: string;
+  location?: string;
+  avatar?: string;
+}
+
 export interface HistoryRecord {
   id: string;
+  userId: string;
   date: string;
   time: string;
   diseaseName: string;
   diseaseId: string;
   percentage: number;
   symptomsCount: number;
+  riskLevel: string;
 }
 
-export type TabKey = 'beranda' | 'penyakit' | 'riwayat' | 'pengaturan';
-export type ActiveScreen = 'onboarding' | 'main' | 'diagnosis_symptoms' | 'diagnosis_confidence' | 'diagnosis_result';
+export type TabKey = 'beranda' | 'katalog' | 'diagnosis' | 'riwayat' | 'profil';
+export type ActiveScreen =
+  | 'onboarding'
+  | 'auth'
+  | 'main'
+  | 'diagnosis_symptoms'
+  | 'diagnosis_confidence'
+  | 'diagnosis_result';
 
 interface DiagnosisState {
   hasOnboarded: boolean;
+  user: UserProfile | null;
   activeTab: TabKey;
   activeScreen: ActiveScreen;
   selectedSymptoms: string[];
@@ -27,9 +45,14 @@ interface DiagnosisState {
   history: HistoryRecord[];
   selectedDiseaseDetail: Disease | null;
   isTestBenchOpen: boolean;
+  offlineNotification: string | null;
 
   // Actions
   finishOnboarding: () => void;
+  login: (email: string, name?: string, farmName?: string) => void;
+  register: (name: string, farmName: string, email: string) => void;
+  guestLogin: () => void;
+  logout: () => void;
   setActiveTab: (tab: TabKey) => void;
   setActiveScreen: (screen: ActiveScreen) => void;
   setSelectedCategory: (cat: string) => void;
@@ -44,31 +67,109 @@ interface DiagnosisState {
   runTestSample: (sampleId: number) => void;
   clearHistory: () => void;
   resetAll: () => void;
+  dismissNotification: () => void;
 }
 
 export const useDiagnosisStore = create<DiagnosisState>((set, get) => ({
-  hasOnboarded: true, // Default to true or can be set to false for first time
+  hasOnboarded: true,
+  user: {
+    id: 'USR-01',
+    name: 'Budi Santoso',
+    farmName: 'Berkah Broiler Farm',
+    email: 'peternak@ayamcare.id',
+    location: 'Ciamis, Jawa Barat'
+  },
   activeTab: 'beranda',
   activeScreen: 'main',
   selectedSymptoms: [],
   confidenceValues: {},
   selectedCategory: 'SEMUA',
   diagnosisResults: null,
+  offlineNotification: null,
   history: [
     {
-      id: 'HIST-INIT',
+      id: 'HIST-INIT-1',
+      userId: 'USR-01',
       date: '8 Nov 2026',
       time: '18:30',
       diseaseName: 'CRD (Chronic Respiratory Disease)',
       diseaseId: 'P13',
       percentage: 99,
-      symptomsCount: 5
+      symptomsCount: 5,
+      riskLevel: 'SEDANG'
+    },
+    {
+      id: 'HIST-INIT-2',
+      userId: 'USR-01',
+      date: '7 Nov 2026',
+      time: '10:15',
+      diseaseName: 'Berak Darah (Koksidiosis)',
+      diseaseId: 'P06',
+      percentage: 80,
+      symptomsCount: 3,
+      riskLevel: 'TINGGI'
     }
   ],
   selectedDiseaseDetail: null,
   isTestBenchOpen: false,
 
-  finishOnboarding: () => set({ hasOnboarded: true, activeScreen: 'main', activeTab: 'beranda' }),
+  finishOnboarding: () => {
+    const { user } = get();
+    set({
+      hasOnboarded: true,
+      activeScreen: user ? 'main' : 'auth',
+      activeTab: 'beranda'
+    });
+  },
+
+  login: (email, name = 'Peternak Broiler', farmName = 'Kandang Sejahtera') => {
+    set({
+      user: {
+        id: `USR-${Date.now()}`,
+        name,
+        farmName,
+        email,
+        location: 'Jawa Barat, ID'
+      },
+      activeScreen: 'main',
+      activeTab: 'beranda'
+    });
+  },
+
+  register: (name, farmName, email) => {
+    set({
+      user: {
+        id: `USR-${Date.now()}`,
+        name,
+        farmName,
+        email,
+        location: 'Jawa Barat, ID'
+      },
+      activeScreen: 'main',
+      activeTab: 'beranda'
+    });
+  },
+
+  guestLogin: () => {
+    set({
+      user: {
+        id: 'GUEST',
+        name: 'Tamu (Peternak)',
+        farmName: 'Mode Tamu Offline',
+        email: 'tamu@offline.local'
+      },
+      activeScreen: 'main',
+      activeTab: 'beranda'
+    });
+  },
+
+  logout: () => {
+    set({
+      user: null,
+      activeScreen: 'auth'
+    });
+  },
+
   setActiveTab: (tab) => set({ activeTab: tab, activeScreen: 'main' }),
   setActiveScreen: (screen) => set({ activeScreen: screen }),
   setSelectedCategory: (cat) => set({ selectedCategory: cat }),
@@ -84,7 +185,7 @@ export const useDiagnosisStore = create<DiagnosisState>((set, get) => ({
     } else {
       set({
         selectedSymptoms: [...selectedSymptoms, symptomId],
-        confidenceValues: { ...confidenceValues, [symptomId]: 0.8 } // Default: Yakin (0.8)
+        confidenceValues: { ...confidenceValues, [symptomId]: 0.8 }
       });
     }
   },
@@ -99,7 +200,7 @@ export const useDiagnosisStore = create<DiagnosisState>((set, get) => ({
   clearSymptoms: () => set({ selectedSymptoms: [], confidenceValues: {} }),
 
   calculateResult: () => {
-    const { selectedSymptoms, confidenceValues, history } = get();
+    const { selectedSymptoms, confidenceValues, history, user } = get();
     const selections = selectedSymptoms.map((id) => ({
       symptomId: id,
       userConfidence: confidenceValues[id] ?? 0.8
@@ -112,26 +213,32 @@ export const useDiagnosisStore = create<DiagnosisState>((set, get) => ({
       const now = new Date();
       const newHistoryItem: HistoryRecord = {
         id: `HIST-${Date.now()}`,
+        userId: user ? user.id : 'GUEST',
         date: now.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }),
         time: now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
         diseaseName: primary.disease.name,
         diseaseId: primary.disease.id,
         percentage: primary.percentage,
-        symptomsCount: primary.matchedRules.length
+        symptomsCount: primary.matchedRules.length,
+        riskLevel: primary.disease.riskLevel
       };
 
       set({
         diagnosisResults: results,
         activeScreen: 'diagnosis_result',
-        history: [newHistoryItem, ...history.slice(0, 30)]
+        history: [newHistoryItem, ...history.slice(0, 40)],
+        offlineNotification: '✅ Diagnosis Selesai & Tersimpan Secara Offline'
       });
     } else {
       set({
         diagnosisResults: [],
-        activeScreen: 'diagnosis_result'
+        activeScreen: 'diagnosis_result',
+        offlineNotification: '⚠️ Gejala Tidak Cocok dengan Basis Aturan'
       });
     }
   },
+
+  dismissNotification: () => set({ offlineNotification: null }),
 
   openDiseaseDetail: (disease) => set({ selectedDiseaseDetail: disease }),
   closeDiseaseDetail: () => set({ selectedDiseaseDetail: null }),
@@ -160,12 +267,13 @@ export const useDiagnosisStore = create<DiagnosisState>((set, get) => ({
   resetAll: () =>
     set({
       hasOnboarded: false,
+      user: null,
       activeTab: 'beranda',
       activeScreen: 'onboarding',
       selectedSymptoms: [],
       confidenceValues: {},
       diagnosisResults: null,
-      history: []
+      history: [],
+      offlineNotification: null
     })
 }));
-
