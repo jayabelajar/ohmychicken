@@ -1,4 +1,4 @@
-# AyamCare — Sistem Pakar Diagnosis Penyakit Ayam Broiler (Certainty Factor)
+# OhMyChicken — Sistem Pakar Diagnosis Penyakit Ayam Broiler (Certainty Factor)
 
 Aplikasi sistem pakar cerdas berbasis *Offline-First* untuk membantu peternak ayam broiler mendeteksi dan mengidentifikasi penyakit kawanan secara cepat dan terukur menggunakan metode **Certainty Factor (CF)**.
 
